@@ -12,7 +12,6 @@ services:
     environment:
       MAILER_DSN: "smtp://mailer:1025"
       DATABASE_URL: "mysql://root:${MYSQL_ROOT_PASS}@db_server:3306/${MYSQL_DB}?serverVersion=11.2.4-MariaDB&charset=utf8mb4"
-      MONGODB_URL: "mongodb://root:rootpassword@mongo:27017"
     networks:
       - symfony_app
 
@@ -51,22 +50,8 @@ services:
       MP_SMTP_AUTH_ACCEPT_ANY: 1
       MP_SMTP_AUTH_ALLOW_INSECURE: 1
 
-  mongo:
-    image: mongo
-    restart: always
-    environment:
-      MONGO_INITDB_ROOT_USERNAME: root
-      MONGO_INITDB_ROOT_PASSWORD: rootpassword
-    ports:
-      - 27018:27017
-    volumes:
-      - mongo_db:/data/db
-    networks:
-      - symfony_app
-    
 networks:
   symfony_app:
 
 volumes:
   db_data:
-  mongo_db:
