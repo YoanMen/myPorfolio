@@ -6,7 +6,12 @@ module.exports = {
     "./assets/react/controller/**/*.jsx"
   ],
   theme: {
-    extend: {},
+    extend: {
+      fontFamily: {
+        customFont: ["Eudoxus", "sans-serif"],
+        // Add more custom font families as needed
+      },    
+    },
   },
-  plugins: [],
+  plugins: [],  
 }
