@@ -8,10 +8,9 @@ module.exports = {
   theme: {
     extend: {
       fontFamily: {
-        customFont: ["Eudoxus", "sans-serif"],
-        // Add more custom font families as needed
-      },    
+        eudoxus: ['Eudoxus', 'sans-serif']
+      },
     },
   },
-  plugins: [],  
+  plugins: [],
 }

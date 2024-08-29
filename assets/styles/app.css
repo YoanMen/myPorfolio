@@ -1,10 +1,14 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
-  
-@font-face {
-  font-family: "Eudoxus";
-  src: url("./fonts/EudoxusSansGX.ttf");
-  font-weight: 100 900;
-  font-display: swap;
-}
+
+
+  @font-face {
+    font-family: "Eudoxus";
+    src: url("./fonts/EudoxusSansGX.ttf");
+    font-weight: 100 900;
+    font-display: swap;
+  }
+
+
+
