@@ -46,7 +46,6 @@ class Project
         $this->links = new ArrayCollection();
     }
 
-
     public function getId(): ?int
     {
         return $this->id;
@@ -153,5 +152,4 @@ class Project
 
         return $this;
     }
-
 }
