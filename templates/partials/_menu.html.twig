@@ -3,13 +3,13 @@
 		Yoan Ménard
 	</a>
 	<ul aria-label="liste des liens" class="flex gap-6 max-sm:mx-auto">
-		<a class="hover:text-white transition-colors duration-150" href="/#propos" aria-label="Lien vers à propos">
+		<a class="hover:text-white transition-colors duration-150" href="{{ url('app_home') }}#propos" data-turbo="false" aria-label="Lien vers à propos">
 			à propos
 		</a>
-		<a class="hover:text-white transition-colors duration-150" href="/#projets" aria-label="Lien vers mes projets">
+		<a class="hover:text-white transition-colors duration-150" href="{{ url('app_home') }}#projets" data-turbo="false" aria-label=" lien vers mes projets">
 			projets
 		</a>
-		<a class="hover:text-white transition-colors duration-150" href="/#contact" aria-label="Lien vers formulaire de contact">
+		<a class="hover:text-white transition-colors duration-150" href="{{ url('app_home') }}#contact" data-turbo="false" aria-label="Lien vers formulaire de contact">
 			contact
 		</a>
 	</ul>
