@@ -125,7 +125,7 @@ export default function FormContact() {
     name: "checkbox consent  ",
     id: "checkbox"
   }), " ", "En cochant cette case, je consens \xE0 ce que mes donn\xE9es soient utilis\xE9es pour me recontacter au sujet de ma demande et ne seront ni stock\xE9es ni partag\xE9es avec des tiers, voir politique de confidentialit\xE9."), /*#__PURE__*/React.createElement(Button, {
-    disabled: false,
+    disabled: disableForm,
     className: "bg-button"
   }, !loading ? "Envoyer" : /*#__PURE__*/React.createElement("svg", {
     className: "mx-auto text-2xl",

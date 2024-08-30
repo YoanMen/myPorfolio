@@ -128,7 +128,7 @@ export default function FormContact() {
           stockées ni partagées avec des tiers, voir politique de
           confidentialité.
         </label>
-        <Button disabled={false} className={"bg-button"}>
+        <Button disabled={disableForm} className={"bg-button"}>
           {!loading ? (
             "Envoyer"
           ) : (
