@@ -32,7 +32,8 @@
         "MehediDracula.php-namespace-resolver",
         "kokororin.vscode-phpfmt",
         "mongodb.mongodb-vscode",
-        "MrChetan.phpstorm-parameter-hints-in-vscode"
+        "MrChetan.phpstorm-parameter-hints-in-vscode",
+        "Supermaven.supermaven"
       ]
     }
   },

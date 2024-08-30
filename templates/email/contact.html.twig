@@ -1,0 +1,17 @@
+<body style="font-family:Arial,Helvetica,sans-serif;">'
+	<p>Demande de contact à été reçue</p>
+	<ul>
+		<li>
+			<strong>Nom :</strong>
+			{{ data.name }}
+		</li>
+		<li>
+			<strong>Email :</strong>
+			{{ data.email }}
+		</li>
+		<li style="margin-top:8px">
+			<strong>Message :</strong><br>
+			{{ data.message | nl2br }}
+		</li>
+	</ul>
+</body>
