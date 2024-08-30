@@ -13,6 +13,6 @@
   "scripts": {
     "watch-react": "babel assets/react --out-dir assets/build/react --presets=@babel/preset-react --watch",
     "build-react": "babel assets/react --out-dir assets/build/react --presets=@babel/preset-react",
-    "test" : "jest"
+    "test": "jest"
   }
 }
