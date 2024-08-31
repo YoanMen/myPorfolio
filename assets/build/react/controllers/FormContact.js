@@ -3,6 +3,7 @@ import InputField from "./InputField.js";
 import TextAreaField from "./TextAreaField.js";
 import Button from "./Button.js";
 import { inputValidation } from "../../../scripts/inputValidation.js";
+import { showNotification } from "./showNotification.js";
 export default function FormContact() {
   const [disableForm, setDisableForm] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -33,7 +34,6 @@ export default function FormContact() {
     }
   };
   const sendData = async data => {
-    console.log(data);
     try {
       const response = await fetch("/contact", {
         method: "POST",
@@ -46,15 +46,15 @@ export default function FormContact() {
         const result = await response.json();
         if (result.success) {
           setDisableForm(true);
-          console.log("Votre message a été envoyé, vous serez rapidement contacté");
+          showNotification("Votre message a été envoyé, vous serez rapidement contacté");
         }
       } else {
-        console.log("Impossible d'envoyer votre message vérifier les informations envoyées");
+        showNotification("Impossible d'envoyer votre message vérifier les informations envoyées");
       }
       setLoading(false);
     } catch (error) {
       setLoading(false);
-      console.log("Impossible d'envoyer votre message une erreur interne est survenu, réessayer plus tard ");
+      showNotification("Impossible d'envoyer votre message une erreur interne est survenu, réessayer plus tard ");
     }
   };
   const onHandleName = value => {
