@@ -4,7 +4,7 @@
 	<ol>
 		{% for project in projects %}
 			<li class="list-none">
-				{% include "partials/_project_card.html.twig" %}
+				<twig:ProjectCard project="{{ project }}"/>
 			</li>
 		{% endfor %}
 	</ol>
