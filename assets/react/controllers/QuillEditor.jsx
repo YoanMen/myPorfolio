@@ -32,20 +32,35 @@ const formats = [
   "code-block",
 ];
 
-export default function MyComponent() {
-  const [value, setValue] = useState("");
+export default function QuillEditor({ onChange, value }) {
+  const [isFocused, setIsFocused] = useState(false); // État pour vérifier si Quill est en focus
 
-  console.log(value);
+  const handleFocus = () => {
+    setIsFocused(true);
+    console.log("focus");
+  };
+
+  const handleBlur = () => {
+    setIsFocused(false);
+  };
+
   return (
-    <>
+    <div
+      id="container"
+      className={
+        "w-full h-full border-stroke border-[1px] rounded-md p-4 bg-secondary " +
+        (isFocused ? " border-white border-opacity-50 border-[1px]" : "")
+      }>
       <ReactQuill
+        bounds="#container"
         theme="bubble"
         modules={modules}
         formats={formats}
         value={value}
-        onChange={setValue}
+        onChange={onChange}
+        onFocus={handleFocus}
+        onBlur={handleBlur}
       />
-      <div>{value}</div>
-    </>
+    </div>
   );
 }

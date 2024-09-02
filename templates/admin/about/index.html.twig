@@ -3,7 +3,13 @@
 {% block title %}Yoan Ménard - à propos
 {% endblock %}
 
-{% block main %}
+{% block pageTitle %}
+	Gestion du à propos
+{% endblock %}
+{% block actionsBtn %}
+	<twig:Button:PrimaryButton id="saveBtn" label="sauvegarder"/>
+{% endblock %}
 
-	<div>test</div>
+{% block main %}
+	<div {{ react_component("AboutForm", {about: about.content} ) }}></div>
 {% endblock %}
