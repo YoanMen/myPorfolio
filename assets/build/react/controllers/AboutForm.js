@@ -1,19 +1,40 @@
 import React, { useState, useEffect } from "react";
 import QuillEditor from "./QuillEditor.js";
 import { showNotification } from "./showNotification.js";
+import { inputValidation } from "../../../scripts/inputValidation.js";
 export default function AboutForm({
   about
 }) {
   const [value, setValue] = useState("");
+  const [error, setError] = useState(null);
   const onChange = value => {
+    setError(inputValidation.about(value.trim()));
     setValue(value);
   };
   const handleSave = async event => {
     event.preventDefault();
-    saveBtn.disabled = true;
-    showNotification("le contenu du à propos a été modifier");
-
-    // send to server
+    const contentError = inputValidation.about(value.trim());
+    if (!contentError) {
+      saveBtn.disabled = true;
+      const response = await fetch("/admin/about", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          content: value
+        })
+      });
+      if (response.ok) {
+        const result = await response.json();
+        if (result.success) {
+          showNotification("Le contenu du à propos a été modifié");
+        } else {
+          showNotification("Impossible d'envoyer le contenu du à propos vérifier les informations envoyées");
+        }
+        saveBtn.disabled = false;
+      }
+    }
   };
   useEffect(() => {
     setValue(about);
@@ -37,5 +58,7 @@ export default function AboutForm({
   }, "contenu du \xE0 propos"), /*#__PURE__*/React.createElement(QuillEditor, {
     onChange: onChange,
     value: value
-  }));
+  }), error && /*#__PURE__*/React.createElement("small", {
+    className: "text-red"
+  }, error));
 }

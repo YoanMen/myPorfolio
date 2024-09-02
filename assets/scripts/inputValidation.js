@@ -46,6 +46,21 @@ function message(value) {
   return error;
 }
 
+function about(value) {
+  let error = null;
+  const cleanedValue = value.replace(/<[^>]*>?/gm, '').length;
+
+  if (cleanedValue === 0) {
+    error = "Le contenu ne doit pas être vide";
+  }
+
+  if (cleanedValue > 1000) {
+    error = "Le contenu ne doit pas faire plus de 1000 caractères";
+  }
+
+  return error;
+}
+
 export const inputValidation = {
-  name, email, message
+  name, email, message, about
 }
