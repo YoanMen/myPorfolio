@@ -3,6 +3,13 @@
 		<p>© Copyright 2024 Yoan Ménard</p>
 		<ul class="flex max-md:flex-col items-center max-md:gap-2 gap-6">
 			<li>
+				{% if is_granted("ROLE_USER") %}
+					<a aria-label="déconnexion" class="hover:text-white transition-colors duration-150" data-turbo="false" href="{{ url("app_logout") }}">déconnexion</a>
+				{% else %}
+					<a id="connexion" aria-label="boutton de connexion" class="hover:text-white transition-colors duration-150" href="{{ url("app_login") }}" data-turbo="false">connexion</a>
+				{% endif %}
+			</li>
+			<li>
 				<a aria-label="Lien vers la page politique de confidentialité" class="hover:text-white transition-colors duration-150" data-turbo="false" href="{{ url("app_confidentiality") }}">politique de confidentialité</a>
 			</li>
 		</ul>

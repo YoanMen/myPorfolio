@@ -8,3 +8,5 @@ export function showNotification(message) {
   const root = createRoot(container);
   root.render(<Notification message={message} />);
 }
+
+export default showNotification;
