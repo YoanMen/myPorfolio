@@ -8,3 +8,4 @@ export function showNotification(message) {
     message: message
   }));
 }
+export default showNotification;

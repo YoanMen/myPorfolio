@@ -28,7 +28,7 @@ export default function FormContact() {
       email: emailError,
       message: messageError
     });
-    if (!nameError && !errors.email && !errors.message) {
+    if (!nameError && !emailError && !messageError) {
       setLoading(true);
       sendData(informations);
     }

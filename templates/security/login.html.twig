@@ -1,0 +1,24 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}
+	Yoan Ménard - Connexion
+{% endblock %}
+
+{% block body %}
+	{% if error %}
+		<div {{ react_component("Notification", {message: error.messageKey|trans(error.messageData, 'security') } ) }}></div>
+	{% endif %}
+	<div class="min-h-screen flex items-center p-4">
+		<div class="bg-secondary max-w-md w-full p-4 rounded-md m-auto border-stroke border-[1px]">
+			<form method="post" class="flex flex-col h-full justify-around gap-2 font-eudoxus">
+				<h1 class="text-2xl mb-4 font-bold text-white text-center">Admin Panel</h1>
+				<label class="text-sm font-medium" for="username">adresse e-mail</label>
+				<input class="bg-primary h-10 rounded-md border-stroke border-[1px] px-2 disabled:opacity-50" type="text" value="{{ last_username }}" name="_username" id="username" class="form-control" autocomplete="username" required autofocus>
+				<label class=" mt-2 text-sm font-medium" for="password">mot de passe</label>
+				<input class="bg-primary h-10 rounded-md border-stroke border-[1px] px-2 disabled:opacity-50 mb-4" type="password" name="_password" id="password" class="form-control" autocomplete="current-password" required>
+				<input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}">
+				<twig:Button:PrimaryButton label="connexion"/>
+			</form>
+		</div>
+	</div>
+{% endblock %}
