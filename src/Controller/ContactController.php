@@ -24,8 +24,7 @@ class ContactController extends AbstractController
         $sender->email = $data['email'];
         $sender->message = $data['message'];
 
-        if ($this->isCsrfTokenValid('contact', $csrf,)) {
-
+        if ($this->isCsrfTokenValid('contact', $csrf)) {
             $errors = $validator->validate($sender);
             if (!count($errors) > 0) {
                 try {

@@ -28,8 +28,7 @@ class AboutController extends AbstractController
         $value = strlen(strip_tags($data['content']));
         $csrf = $data['csrf_token'];
 
-        if ($this->isCsrfTokenValid('about', $csrf,)) {
-
+        if ($this->isCsrfTokenValid('about', $csrf)) {
             if ($value > 0 && $value < 1000) {
                 try {
                     $about = $manager->getRepository(About::class)->find(['id' => 1]);
