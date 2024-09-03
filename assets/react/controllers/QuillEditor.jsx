@@ -37,7 +37,6 @@ export default function QuillEditor({ onChange, value }) {
 
   const handleFocus = () => {
     setIsFocused(true);
-    console.log("focus");
   };
 
   const handleBlur = () => {
