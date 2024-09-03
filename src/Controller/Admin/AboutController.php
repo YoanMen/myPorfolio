@@ -26,19 +26,25 @@ class AboutController extends AbstractController
     {
         $data = json_decode($request->getContent(), true);
         $value = strlen(strip_tags($data['content']));
+        $csrf = $data['csrf_token'];
 
-        if ($value > 0 && $value < 1000) {
-            try {
-                $about = $manager->getRepository(About::class)->find(['id' => 1]);
-                $about->setContent($data['content']);
-                $manager->flush();
+        if ($this->isCsrfTokenValid('about', $csrf,)) {
 
-                return $this->json(['success' => true]);
-            } catch (\Throwable $th) {
-                return $this->json(['success' => false, 'error' => 'error to insert new value']);
+            if ($value > 0 && $value < 1000) {
+                try {
+                    $about = $manager->getRepository(About::class)->find(['id' => 1]);
+                    $about->setContent($data['content']);
+                    $manager->flush();
+
+                    return $this->json(['success' => true]);
+                } catch (\Throwable $th) {
+                    return $this->json(['success' => false, 'error' => 'impossible de sauvegarder les données, une erreur interne est survenue'], 500);
+                }
             }
-        }
 
-        return $this->json(['success' => false]);
+            return $this->json(['success' => false, 'error' => 'Les données fournis ne sont pas corrects'], 406);
+        } else {
+            return $this->json(['success' => false, 'error' => 'La clé CSRF n\'est pas valide'], 401);
+        }
     }
 }

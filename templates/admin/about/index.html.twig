@@ -11,5 +11,5 @@
 {% endblock %}
 
 {% block main %}
-	<div {{ react_component("AboutForm", {about: about.content} ) }}></div>
+	<div {{ react_component("AboutForm", {about: about.content, csrf_token : csrf_token('about') } ) }}></div>
 {% endblock %}

@@ -3,7 +3,8 @@ import QuillEditor from "./QuillEditor.js";
 import { showNotification } from "./showNotification.js";
 import { inputValidation } from "../../../scripts/inputValidation.js";
 export default function AboutForm({
-  about
+  about,
+  csrf_token
 }) {
   const [value, setValue] = useState("");
   const [error, setError] = useState(null);
@@ -16,24 +17,20 @@ export default function AboutForm({
     const contentError = inputValidation.about(value.trim());
     if (!contentError) {
       saveBtn.disabled = true;
-      const response = await fetch("/admin/about", {
+      await fetch("/admin/about", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json"
-        },
         body: JSON.stringify({
-          content: value
+          content: value,
+          csrf_token: csrf_token
         })
-      });
-      if (response.ok) {
-        const result = await response.json();
+      }).then(res => res.json()).then(result => {
         if (result.success) {
           showNotification("Le contenu du à propos a été modifié");
         } else {
-          showNotification("Impossible d'envoyer le contenu du à propos vérifier les informations envoyées");
+          showNotification(result.error);
         }
-        saveBtn.disabled = false;
-      }
+      }).catch(error => showNotification("erreur lors de l'envoie du contenu du à propos"));
+      saveBtn.disabled = false;
     }
   };
   useEffect(() => {
