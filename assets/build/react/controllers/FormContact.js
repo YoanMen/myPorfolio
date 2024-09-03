@@ -4,7 +4,9 @@ import TextAreaField from "./TextAreaField.js";
 import Button from "./Button.js";
 import { inputValidation } from "../../../scripts/inputValidation.js";
 import { showNotification } from "./showNotification.js";
-export default function FormContact() {
+export default function FormContact({
+  csrf_token
+}) {
   const [disableForm, setDisableForm] = useState(false);
   const [loading, setLoading] = useState(false);
   const [errors, setErrors] = useState({
@@ -34,28 +36,26 @@ export default function FormContact() {
     }
   };
   const sendData = async data => {
-    try {
-      const response = await fetch("/contact", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify(data)
-      });
-      if (response.ok) {
-        const result = await response.json();
-        if (result.success) {
-          setDisableForm(true);
-          showNotification("Votre message a été envoyé, vous serez rapidement contacté");
-        }
+    setDisableForm(true);
+    await fetch("/contact", {
+      method: "POST",
+      body: JSON.stringify({
+        ...data,
+        csrf_token: csrf_token
+      })
+    }).then(res => res.json()).then(data => {
+      if (data.success) {
+        showNotification("Votre message a été envoyé, vous serez rapidement contacté");
       } else {
-        showNotification("Impossible d'envoyer votre message vérifier les informations envoyées");
+        showNotification(data.error);
+        setDisableForm(false);
       }
       setLoading(false);
-    } catch (error) {
+    }).catch(error => {
+      showNotification("erreur : " + error);
+      setDisableForm(false);
       setLoading(false);
-      showNotification("Impossible d'envoyer votre message une erreur interne est survenu, réessayer plus tard ");
-    }
+    });
   };
   const onHandleName = value => {
     value = value.trim();

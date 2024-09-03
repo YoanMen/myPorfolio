@@ -17,23 +17,29 @@ class ContactController extends AbstractController
     {
         $content = $request->getContent();
         $data = json_decode($content, true);
+        $csrf = $data['csrf_token'];
 
         $sender = new ContactDTO();
         $sender->name = $data['name'];
         $sender->email = $data['email'];
         $sender->message = $data['message'];
 
-        $errors = $validator->validate($sender);
-        if (!count($errors) > 0) {
-            try {
-                $mailerService->sendContactEmail($sender);
+        if ($this->isCsrfTokenValid('contact', $csrf,)) {
 
-                return new JsonResponse(['success' => $mailerService], 200);
-            } catch (\Exception $e) {
-                return new JsonResponse(['success' => false, 'error' => 'Cant sent your mail internal error'], 500);
+            $errors = $validator->validate($sender);
+            if (!count($errors) > 0) {
+                try {
+                    $mailerService->sendContactEmail($sender);
+
+                    return new JsonResponse(['success' => $mailerService]);
+                } catch (\Exception $th) {
+                    return new JsonResponse(['success' => false, 'error' => 'Impossible d\'envoyer votre mail, erreur interne'], 500);
+                }
+            } else {
+                return new JsonResponse(['success' => false, 'error' => (string) $errors], 405);
             }
         } else {
-            return new JsonResponse(['success' => false, 'error' => (string) $errors], 405);
+            return new JsonResponse(['success' => false, 'error' => 'La clé CSRF n\'est pas valide'], 401);
         }
     }
 }
