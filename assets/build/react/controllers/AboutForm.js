@@ -25,11 +25,11 @@ export default function AboutForm({
         })
       }).then(res => res.json()).then(result => {
         if (result.success) {
-          showNotification("Le contenu du à propos a été modifié");
+          showNotification("Le contenu du a propos a été modifié");
         } else {
           showNotification(result.error);
         }
-      }).catch(error => showNotification("erreur lors de l'envoie du contenu du à propos"));
+      }).catch(error => showNotification("erreur lors de l'envoie du contenu du a propos"));
       saveBtn.disabled = false;
     }
   };

@@ -26,13 +26,13 @@ export default function AboutForm({ about, csrf_token }) {
         .then((res) => res.json())
         .then((result) => {
           if (result.success) {
-            showNotification("Le contenu du à propos a été modifié");
+            showNotification("Le contenu du a propos a été modifié");
           } else {
             showNotification(result.error);
           }
         })
         .catch((error) =>
-          showNotification("erreur lors de l'envoie du contenu du à propos")
+          showNotification("erreur lors de l'envoie du contenu du a propos")
         );
 
       saveBtn.disabled = false;
@@ -59,7 +59,6 @@ export default function AboutForm({ about, csrf_token }) {
 
   return (
     <form className="w-full h-full sticky top-0 z-30">
-      {/* <input type="hidden" name="_csrf_token" value={csrf_token} /> */}
       <label
         htmlFor="container"
         className="flex flex-col gap-2 mb-2 w-full text-sm font-medium">
