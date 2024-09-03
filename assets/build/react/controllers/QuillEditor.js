@@ -15,14 +15,30 @@ const modules = {
   }], ["link", "image"], ["clean"]]
 };
 const formats = ["header", "bold", "italic", "underline", "strike", "blockquote", "list", "bullet", "indent", "link", "image", "code-block"];
-export default function MyComponent() {
-  const [value, setValue] = useState("");
-  console.log(value);
-  return /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement(ReactQuill, {
+export default function QuillEditor({
+  onChange,
+  value
+}) {
+  const [isFocused, setIsFocused] = useState(false); // État pour vérifier si Quill est en focus
+
+  const handleFocus = () => {
+    setIsFocused(true);
+    console.log("focus");
+  };
+  const handleBlur = () => {
+    setIsFocused(false);
+  };
+  return /*#__PURE__*/React.createElement("div", {
+    id: "container",
+    className: "w-full h-full border-stroke border-[1px] rounded-md p-4 bg-secondary " + (isFocused ? " border-white border-opacity-50 border-[1px]" : "")
+  }, /*#__PURE__*/React.createElement(ReactQuill, {
+    bounds: "#container",
     theme: "bubble",
     modules: modules,
     formats: formats,
     value: value,
-    onChange: setValue
-  }), /*#__PURE__*/React.createElement("div", null, value));
+    onChange: onChange,
+    onFocus: handleFocus,
+    onBlur: handleBlur
+  }));
 }

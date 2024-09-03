@@ -15,9 +15,15 @@
 			{% endblock %}
 		{% endblock %}
 	</head>
-	<body class="bg-secondary text-text">
+	<body class="bg-secondary text-text flex h-full ">
 		{% include "admin/partials/_menu.html.twig" %}
-
-		{% block body %}{% endblock %}
-	</body>
-</html>
+		<main class=" p-4 pt-0 w-full h-screen overflow-y-scroll">
+			<header class="py-4 flex max-sm:flex-col max-md:gap-2 justify-between w-full mb-4 sticky top-0 bg-secondary z-50">
+				<h1 class="text-3xl font-bold text-white line-clamp-1"> {% block pageTitle %}{% endblock %}
+					</h1>
+					{% block actionsBtn %}{% endblock %}
+				</header>
+				{% block main %}{% endblock %}
+			</main>
+		</body>
+	</html>

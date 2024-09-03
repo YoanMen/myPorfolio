@@ -22,7 +22,7 @@ export default function Notification({
   };
   return /*#__PURE__*/createPortal( /*#__PURE__*/React.createElement("div", {
     id: id,
-    className: ` fixed sm:top-10 flex flex-col sm:gap-2 top-0 sm:right-10 w-screen sm:max-w-80 p-4 bg-secondary border-stroke border-[1px] sm:rounded-lg ${visible ? "notification-enter" : "notification-exit"}`,
+    className: ` fixed sm:top-10 flex flex-col sm:gap-2 top-0 z-50 sm:right-10 w-screen sm:max-w-80 p-4 bg-secondary border-stroke border-[1px] sm:rounded-lg ${visible ? "notification-enter" : "notification-exit"}`,
     role: "alert"
   }, /*#__PURE__*/React.createElement("div", {
     className: "flex items-start gap-4"

@@ -27,7 +27,7 @@ export default function Notification({ message }) {
   return createPortal(
     <div
       id={id}
-      className={` fixed sm:top-10 flex flex-col sm:gap-2 top-0 sm:right-10 w-screen sm:max-w-80 p-4 bg-secondary border-stroke border-[1px] sm:rounded-lg ${
+      className={` fixed sm:top-10 flex flex-col sm:gap-2 top-0 z-50 sm:right-10 w-screen sm:max-w-80 p-4 bg-secondary border-stroke border-[1px] sm:rounded-lg ${
         visible ? "notification-enter" : "notification-exit"
       }`}
       role="alert">
