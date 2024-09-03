@@ -1,3 +1,5 @@
+import isSvg from 'is-svg';
+
 function name(value) {
   let error = null;
 
@@ -61,6 +63,23 @@ function about(value) {
   return error;
 }
 
+function checkLength(value, max = 60) {
+  let error = null;
+
+  if (value.length === 0) {
+    error = "Ne doit pas être vide";
+  }
+  if (value.length > max) {
+    error = "doit être entre 1 et " + max + " caractères";
+  }
+
+  return error;
+}
+
+function checkIsSVG(value) {
+  return isSvg(value) ? null : "Le fichier doit être un SVG";
+}
+
 export const inputValidation = {
-  name, email, message, about
+  name, email, message, about, checkLength, checkIsSVG
 }

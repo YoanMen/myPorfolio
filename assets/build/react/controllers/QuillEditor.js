@@ -27,10 +27,9 @@ export default function QuillEditor({
   const handleBlur = () => {
     setIsFocused(false);
   };
-  return /*#__PURE__*/React.createElement("div", {
+  return /*#__PURE__*/React.createElement(ReactQuill, {
+    className: "w-full h-full border-stroke border-[1px] rounded-md  bg-secondary font-eudoxus " + (isFocused ? " border-white border-opacity-50 border-[1px]" : ""),
     id: "container",
-    className: "w-full h-full border-stroke border-[1px] rounded-md p-4 bg-secondary " + (isFocused ? " border-white border-opacity-50 border-[1px]" : "")
-  }, /*#__PURE__*/React.createElement(ReactQuill, {
     bounds: "#container",
     theme: "bubble",
     modules: modules,
@@ -39,5 +38,5 @@ export default function QuillEditor({
     onChange: onChange,
     onFocus: handleFocus,
     onBlur: handleBlur
-  }));
+  });
 }

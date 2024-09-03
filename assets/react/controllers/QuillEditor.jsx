@@ -44,22 +44,20 @@ export default function QuillEditor({ onChange, value }) {
   };
 
   return (
-    <div
-      id="container"
+    <ReactQuill
       className={
-        "w-full h-full border-stroke border-[1px] rounded-md p-4 bg-secondary " +
+        "w-full h-full border-stroke border-[1px] rounded-md  bg-secondary font-eudoxus " +
         (isFocused ? " border-white border-opacity-50 border-[1px]" : "")
-      }>
-      <ReactQuill
-        bounds="#container"
-        theme="bubble"
-        modules={modules}
-        formats={formats}
-        value={value}
-        onChange={onChange}
-        onFocus={handleFocus}
-        onBlur={handleBlur}
-      />
-    </div>
+      }
+      id="container"
+      bounds="#container"
+      theme="bubble"
+      modules={modules}
+      formats={formats}
+      value={value}
+      onChange={onChange}
+      onFocus={handleFocus}
+      onBlur={handleBlur}
+    />
   );
 }

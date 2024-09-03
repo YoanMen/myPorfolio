@@ -1,0 +1,15 @@
+{% extends 'admin/base.html.twig' %}
+
+{% block title %}Yoan Ménard - icônes
+{% endblock %}
+
+{% block pageTitle %}
+	Gestion des icônes
+{% endblock %}
+{% block actionsBtn %}
+	<twig:Button:PrimaryButton id="saveBtn" label="créer une icône" url="{{ url("app_admin.icon.new") }}"/>
+{% endblock %}
+
+{% block main %}
+	<div {{ react_component("Table", {data: icons, value: { id: 'id' , name: 'nom' } , url: "icon" } ) }}></div>
+{% endblock %}

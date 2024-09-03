@@ -1,3 +1,9 @@
-<button id="{{ id ?? '' }}" class="h-10 min-w-32 rounded-md button font-bold disabled:opacity-50 hover:bg-opacity-90 disabled:hover:bg-opacity-100 active:bg-opacity-80 text-secondary transition-all duration-150 ease-in-out bg-button " {{ class ?? '' }}>
-	{{ label }}
-</button>
+{% if url is defined %}
+	<a id="{{ id ?? '' }}" class="h-10 min-w-32 flex items-center justify-center rounded-md button font-bold disabled:opacity-50 hover:bg-opacity-90 disabled:hover:bg-opacity-100 active:bg-opacity-80 text-secondary transition-all duration-150 ease-in-out bg-button " {{ class ?? '' }} href="{{ url }}">
+		{{ label }}
+	</a>
+{% else %}
+	<button id="{{ id ?? '' }}" class="h-10 min-w-32 rounded-md button font-bold disabled:opacity-50 hover:bg-opacity-90 disabled:hover:bg-opacity-100 active:bg-opacity-80 text-secondary transition-all duration-150 ease-in-out bg-button " {{ class ?? '' }}>
+		{{ label }}
+	</button>
+{% endif %}

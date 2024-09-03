@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
-import QuillEditor from "./QuillEditor.js";
-import { showNotification } from "./showNotification.js";
-import { inputValidation } from "../../../scripts/inputValidation.js";
+import QuillEditor from "../QuillEditor.js";
+import { showNotification } from "../showNotification.js";
+import { inputValidation } from "../../../../scripts/inputValidation.js";
 export default function AboutForm({
   about,
   csrf_token
@@ -15,23 +15,24 @@ export default function AboutForm({
   const handleSave = async event => {
     event.preventDefault();
     const contentError = inputValidation.about(value.trim());
-    if (!contentError) {
-      saveBtn.disabled = true;
-      await fetch("/admin/about", {
-        method: "POST",
-        body: JSON.stringify({
-          content: value,
-          csrf_token: csrf_token
-        })
-      }).then(res => res.json()).then(result => {
-        if (result.success) {
-          showNotification("Le contenu du a propos a été modifié");
-        } else {
-          showNotification(result.error);
-        }
-      }).catch(error => showNotification("erreur lors de l'envoie du contenu du a propos"));
-      saveBtn.disabled = false;
+    setError(contentError);
+    if (contentError) {
+      return;
     }
+    saveBtn.disabled = true;
+    await fetch("/admin/about", {
+      method: "POST",
+      body: JSON.stringify({
+        content: value,
+        csrf_token: csrf_token
+      })
+    }).then(res => res.json()).then(result => {
+      if (result.success) {
+        return showNotification("Le contenu du a propos a été modifié");
+      }
+      return showNotification(result.error);
+    }).catch(error => showNotification("erreur : " + error));
+    saveBtn.disabled = false;
   };
   useEffect(() => {
     setValue(about);
@@ -48,7 +49,7 @@ export default function AboutForm({
     };
   }, [value]);
   return /*#__PURE__*/React.createElement("form", {
-    className: "w-full h-full sticky top-0 z-30"
+    className: "w-full h-full sticky top-0 z-30 font-eudoxus"
   }, /*#__PURE__*/React.createElement("label", {
     htmlFor: "container",
     className: "flex flex-col gap-2 mb-2 w-full text-sm font-medium"
