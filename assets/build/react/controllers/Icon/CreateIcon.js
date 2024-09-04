@@ -3,6 +3,7 @@ import InputField from "../InputField.js";
 import TextAreaField from "../TextAreaField.js";
 import { inputValidation } from "../../../../scripts/inputValidation.js";
 import { showNotification } from "../showNotification.js";
+import Switch from "../ToggleSwitch.js";
 export default function CreateIcon({
   token_csrf
 }) {
@@ -76,7 +77,9 @@ export default function CreateIcon({
   return /*#__PURE__*/React.createElement("form", {
     method: "POST",
     className: "font-eudoxus flex flex-col gap-4"
-  }, /*#__PURE__*/React.createElement(InputField, {
+  }, /*#__PURE__*/React.createElement(Switch, {
+    label: "technologie"
+  }), /*#__PURE__*/React.createElement(InputField, {
     label: "nom",
     id: "name",
     className: "max-w-80",

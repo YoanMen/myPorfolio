@@ -3,6 +3,7 @@ import InputField from "../InputField.js";
 import TextAreaField from "../TextAreaField.js";
 import { inputValidation } from "../../../../scripts/inputValidation.js";
 import { showNotification } from "../showNotification.js";
+import Switch from "../ToggleSwitch.js";
 
 export default function CreateIcon({ token_csrf }) {
   const [errors, setErrors] = useState({ name: null, svg: null });
@@ -69,6 +70,7 @@ export default function CreateIcon({ token_csrf }) {
 
   return (
     <form method="POST" className="font-eudoxus flex flex-col gap-4">
+      <Switch label="technologie"/>
       <InputField
         label="nom"
         id="name"

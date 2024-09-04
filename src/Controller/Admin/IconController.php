@@ -2,6 +2,8 @@
 
 namespace App\Controller\Admin;
 
+use App\Entity\Icon;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
@@ -29,9 +31,17 @@ class IconController extends AbstractController
         ]);
     }
 
-    #[Route('/admin/icon/create', name: 'app_admin.icon.new')]
-    public function create(): Response
+    #[Route('/admin/icon/create', name: 'app_admin.icon.create')]
+    public function create(EntityManagerInterface $entityManager): Response
     {
+        if ($_SERVER["REQUEST_METHOD"] == "POST") {
+
+            $icon = new Icon();
+            $icon->setName("test");
+            $icon->setSvg("");
+
+        }
+
         return $this->render('admin/icon/create.html.twig', []);
     }
 
