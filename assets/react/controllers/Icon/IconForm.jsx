@@ -5,9 +5,18 @@ import { inputValidation } from "../../../../scripts/inputValidation.js";
 import { showNotification } from "../showNotification.js";
 import Switch from "../ToggleSwitch.js";
 
-export default function CreateIcon({ token_csrf }) {
+export default function IconForm({
+  update = false,
+  csrf_token,
+  icon = { name: "", svg: "", isTechnology: false },
+}) {
   const [errors, setErrors] = useState({ name: null, svg: null });
-  const [informations, setInformations] = useState({ name: "", svg: "" });
+  const [disableForm, setDisableForm] = useState(false);
+  const [informations, setInformations] = useState({
+    name: icon.name,
+    svg: icon.svg,
+    isTechnology: icon.isTechnology,
+  });
 
   useEffect(() => {
     const saveBtn = document.getElementById("saveBtn");
@@ -25,7 +34,6 @@ export default function CreateIcon({ token_csrf }) {
 
   const handleSave = async (event) => {
     event.preventDefault();
-
     const nameError = inputValidation.checkLength(informations.name.trim(), 60);
     const svgError = inputValidation.checkIsSVG(informations.svg.trim());
 
@@ -35,23 +43,34 @@ export default function CreateIcon({ token_csrf }) {
       return;
     }
 
-    await fetch(`/icon/create`, {
+    saveBtn.disabled = true;
+    setDisableForm(true);
+
+    await fetch(`/admin/icon/${update ? icon.id : "create"}`, {
       method: "POST",
       body: JSON.stringify({
         name: informations.name,
         svg: informations.svg,
-        token_csrf: token_csrf,
+        isTechnology: informations.isTechnology,
+        csrf_token: csrf_token,
       }),
     })
       .then((res) => res.json())
       .then((data) => {
         if (data.success) {
-          // redirect with a success message
+          document.location.href = "/admin/icon/";
+          return;
         }
 
+        setDisableForm(false);
+        saveBtn.disabled = false;
         return showNotification(data.error);
       })
-      .catch((error) => showNotification("erreur : " + error));
+      .catch((error) => {
+        showNotification("erreur : " + error);
+        setDisableForm(false);
+        saveBtn.disabled = false;
+      });
   };
 
   const onHandleName = (value) => {
@@ -68,22 +87,45 @@ export default function CreateIcon({ token_csrf }) {
     setInformations({ ...informations, svg: value });
   };
 
+  const onHandleIsTechnology = (value) => {
+    setInformations({ ...informations, isTechnology: value });
+  };
+
   return (
-    <form method="POST" className="font-eudoxus flex flex-col gap-4">
-      <Switch label="technologie"/>
-      <InputField
-        label="nom"
-        id="name"
-        className="max-w-80"
-        error={errors.name}
-        onChange={onHandleName}
-      />
+    <div className="font-eudoxus flex flex-col gap-4">
+      <div className="flex gap-4 max-sm:flex-col-reverse">
+        <InputField
+          label="nom"
+          id="name"
+          className="max-w-80"
+          error={errors.name}
+          onChange={onHandleName}
+          value={informations.name}
+          disabled={disableForm}
+        />
+        <label
+          className="flex flex-col gap-2 justify-start"
+          htmlFor="technologie">
+          technologie
+          <Switch
+            name={"technologie"}
+            id={"technologie"}
+            label="technologie"
+            className="mt-1"
+            onChange={onHandleIsTechnology}
+            checked={informations.isTechnology}
+            disabled={disableForm}
+          />
+        </label>
+      </div>
       <TextAreaField
         label="SVG"
-        id="name"
+        id="svg"
         error={errors.svg}
         onChange={onHandleSVG}
+        value={informations.svg}
+        disabled={disableForm}
       />
-    </form>
+    </div>
   );
 }

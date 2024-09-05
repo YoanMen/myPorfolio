@@ -9,6 +9,7 @@ export default function InputField({
   error,
   disabled,
   autoFocus,
+  value,
 }) {
   return (
     <label
@@ -25,6 +26,7 @@ export default function InputField({
         id={id}
         type={type}
         className="bg-primary h-10 rounded-md border-stroke border-[1px] px-2 disabled:opacity-50"
+        value={value}
       />
       {error && <small className="text-red">{error}</small>}
     </label>

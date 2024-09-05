@@ -1,6 +1,6 @@
 <a data-turbo="{{ turbo ?? 'true' }}" href=" {{ href }} " class=" {{ class ?? '' }} flex gap-2 items-center justify-start border-[1px] rounded-md p-2 w-full max-sm:w-fit max-sm:mx-2 font-bold {{ active ?? false ? " text-white bg-secondary border-[1px] border-stroke hover:bg-primary " : " border-primary hover:text-white " }} ">
 	{{ icon | raw }}
-	<span class="max-sm:hidden overflow-hidden line-clamp-1 sm:mb-1 text-sm">
+	<span class="max-sm:hidden overflow-hidden line-clamp-1  text-sm">
 		{{ label }}
 	</span>
 </a>

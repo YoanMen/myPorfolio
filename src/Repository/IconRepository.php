@@ -4,6 +4,7 @@ namespace App\Repository;
 
 use App\Entity\Icon;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\ORM\Tools\Pagination\Paginator;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
@@ -16,28 +17,18 @@ class IconRepository extends ServiceEntityRepository
         parent::__construct($registry, Icon::class);
     }
 
-    //    /**
-    //     * @return Icon[] Returns an array of Icon objects
-    //     */
-    //    public function findByExampleField($value): array
-    //    {
-    //        return $this->createQueryBuilder('i')
-    //            ->andWhere('i.exampleField = :val')
-    //            ->setParameter('val', $value)
-    //            ->orderBy('i.id', 'ASC')
-    //            ->setMaxResults(10)
-    //            ->getQuery()
-    //            ->getResult()
-    //        ;
-    //    }
-
-    //    public function findOneBySomeField($value): ?Icon
-    //    {
-    //        return $this->createQueryBuilder('i')
-    //            ->andWhere('i.exampleField = :val')
-    //            ->setParameter('val', $value)
-    //            ->getQuery()
-    //            ->getOneOrNullResult()
-    //        ;
-    //    }
+    /**
+     * paginateIcon.
+     *
+     * @return Paginator<Icon>
+     */
+    public function paginateIcon(int $page, int $limit): Paginator
+    {
+        return new Paginator($this
+            ->createQueryBuilder('i')
+            ->setFirstResult(($page - 1) * $limit)
+            ->setMaxResults($limit)
+            ->getQuery()
+            ->setHint(Paginator::HINT_ENABLE_DISTINCT, false), false);
+    }
 }

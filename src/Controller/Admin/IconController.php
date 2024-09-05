@@ -3,66 +3,173 @@
 namespace App\Controller\Admin;
 
 use App\Entity\Icon;
+use App\Repository\IconRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 class IconController extends AbstractController
 {
     #[Route('/admin/icon', name: 'app_admin.icon')]
-    public function index(): Response
+    public function index(IconRepository $iconRepository, Request $request): Response
     {
+        $page = $request->query->getInt('page', 1);
+        $iconsEntities = $iconRepository->paginateIcon($page, 10);
+        $maxPage = ceil($iconsEntities->count() / 10);
+
+        $icons = [];
+
+        foreach ($iconsEntities as $icon) {
+            $icons[] =
+                [
+                    'id' => $icon->getId(),
+                    'name' => $icon->getName(),
+                    'svg' => $icon->getSvg(),
+                    'isTechnology' => $icon->isTechnology(),
+                ];
+        }
+
         return $this->render('admin/icon/index.html.twig', [
-            'icons' => [
-                [
-                    'id' => 1,
-                    'name' => 'name01',
-                    'svg' => '<svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24"><path fill="currentColor" d="M6 15h1.5V9H5v1.5h1zm2.5 0H13V9H8.5zm1.5-1.5v-3h1.5v3zm3.925 1.5h1.5v-2.25l1.75 2.25H19l-2.325-3L19 9h-1.825l-1.75 2.25V9h-1.5zM3 21V3h18v18zm2-2h14V5H5zm0 0V5z"/></svg>',
-                    'test' => 'test'
-                ],
-                [
-                    'name' => 'name02',
-                    'svg' => 'svg02',
-                    'id' => 2
-                ]
-            ],
+            'icons' => $icons,
+            'page' => $page,
+            'maxPage' => $maxPage,
         ]);
     }
 
     #[Route('/admin/icon/create', name: 'app_admin.icon.create')]
-    public function create(EntityManagerInterface $entityManager): Response
+    public function create(ValidatorInterface $validator, EntityManagerInterface $entityManager, Request $request): Response|JsonResponse
     {
-        if ($_SERVER["REQUEST_METHOD"] == "POST") {
+        if ('POST' == $_SERVER['REQUEST_METHOD']) {
+            $data = json_decode($request->getContent(), true);
 
-            $icon = new Icon();
-            $icon->setName("test");
-            $icon->setSvg("");
+            $csrf = $data['csrf_token'];
+            $name = htmlspecialchars(trim($data['name']));
+            $svg = strip_tags(trim($data['svg']), '<svg><path><rect>');
+            $isTechnology = $data['isTechnology'];
 
+            if ($this->isCsrfTokenValid('create_icon', $csrf)) {
+                try {
+                    $icon = new Icon();
+                    $icon->setName($name);
+                    $icon->setSvg($svg);
+                    $icon->setTechnology($isTechnology);
+
+                    $errors = $validator->validate($icon);
+
+                    if (count($errors) > 0) {
+                        $errorsList = [];
+
+                        foreach ($errors as $error) {
+                            $errorsList[] = $error->getMessage();
+                        }
+
+                        return $this->json(['success' => false, 'error' => $errorsList], 500);
+                    }
+
+                    $entityManager->persist($icon);
+                    $entityManager->flush();
+
+                    $this->addFlash(
+                        'message',
+                        $icon->getName().' a été créée'
+                    );
+
+                    return $this->json(['success' => true]);
+                } catch (\Throwable $th) {
+                    return $this->json(['success' => false, 'error' => 'impossible de sauvegarder les données, une erreur interne est survenue'], 500);
+                }
+            }
+
+            return $this->json(['success' => false, 'error' => 'La clé CSRF n\'est pas valide'], 401);
         }
 
         return $this->render('admin/icon/create.html.twig', []);
     }
 
-    #[Route('/admin/icon/{id}', name: 'app_admin.icon.edit')]
-    public function edit(): Response
+    #[Route('/admin/icon/{id}', methods: ['GET', 'POST'], name: 'app_admin.icon.update')]
+    public function update(ValidatorInterface $validator, EntityManagerInterface $entityManager, int $id, Request $request): Response|JsonResponse
     {
-        return $this->render('admin/icon/edit.html.twig', [
+        $icon = $entityManager->getRepository(Icon::class)->findOneBy(['id' => $id]);
+
+        if ('POST' == $_SERVER['REQUEST_METHOD']) {
+            $data = json_decode($request->getContent(), true);
+
+            $csrf = $data['csrf_token'];
+            $name = htmlspecialchars(trim($data['name']));
+            $svg = strip_tags(trim($data['svg']), '<svg><path><rect>');
+            $isTechnology = $data['isTechnology'];
+
+            if ($this->isCsrfTokenValid('update_icon', $csrf)) {
+                try {
+                    $icon->setName($name);
+                    $icon->setSvg($svg);
+                    $icon->setTechnology($isTechnology);
+
+                    $errors = $validator->validate($icon);
+
+                    if (count($errors) > 0) {
+                        $errorsList = [];
+
+                        foreach ($errors as $error) {
+                            $errorsList[] = $error->getMessage();
+                        }
+
+                        return $this->json(['success' => false, 'error' => $errorsList], 500);
+                    }
+
+                    $entityManager->flush();
+
+                    $this->addFlash(
+                        'message',
+                        $icon->getName().' a été modifiée'.$errors
+                    );
+
+                    return $this->json(['success' => true]);
+                } catch (\Throwable $th) {
+                    return $this->json(['success' => false, 'error' => 'impossible de sauvegarder les données, une erreur interne est survenue'], 500);
+                }
+            }
+
+            return $this->json(['success' => false, 'error' => 'La clé CSRF n\'est pas valide'], 401);
+        }
+
+        return $this->render('admin/icon/update.html.twig', [
             'icon' => [
-                [
-                    'id' => 1,
-                    'name' => 'name01',
-                    'svg' => '<svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24"><path fill="currentColor" d="M6 15h1.5V9H5v1.5h1zm2.5 0H13V9H8.5zm1.5-1.5v-3h1.5v3zm3.925 1.5h1.5v-2.25l1.75 2.25H19l-2.325-3L19 9h-1.825l-1.75 2.25V9h-1.5zM3 21V3h18v18zm2-2h14V5H5zm0 0V5z"/></svg>',
-                    'test' => 'test'
-                ]
+                'id' => $icon->getId(),
+                'name' => $icon->getName(),
+                'svg' => $icon->getSvg(),
+                'isTechnology' => $icon->isTechnology(),
             ],
         ]);
     }
 
-    #[Route('/admin/icon/{id}', methods: ['POST'], name: 'app_admin.icon.delete')]
-    public function remove(): JsonResponse
+    #[Route('/admin/icon/{id}', methods: ['DELETE'], name: 'app_admin.icon.delete')]
+    public function remove(int $id, EntityManagerInterface $entityManager, Request $request): JsonResponse
     {
-        return $this->json(['success' => true]);
+        $data = json_decode($request->getContent(), true);
+        $csrf = $data['csrf_token'];
+
+        if ($this->isCsrfTokenValid('icon_delete', $csrf)) {
+            try {
+                $icon = $entityManager->getRepository(Icon::class)->findOneBy(['id' => $id]);
+                $entityManager->remove($icon);
+                $entityManager->flush();
+
+                $this->addFlash(
+                    'message',
+                    $icon->getName().' a été supprimée'
+                );
+
+                return $this->json(['success' => true]);
+            } catch (\Throwable $th) {
+                return $this->json(['success' => false, 'error' => 'impossible de supprimer les données, une erreur interne est survenue'], 500);
+            }
+        }
+
+        return $this->json(['success' => false, 'error' => 'La clé CSRF n\'est pas valide'], 401);
     }
 }

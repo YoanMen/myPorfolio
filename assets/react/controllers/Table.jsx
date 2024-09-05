@@ -1,19 +1,52 @@
 import React, { useState } from "react";
+import { showConfirmDialog } from "./showConfirmDialog.js";
+import showNotification from "./showNotification.js";
 
-export default function Table({ data, value, url }) {
+export default function Table({ csrf_token, data, value, url }) {
   const [openActions, setOpenActions] = useState(null);
 
   const handleActionsToggle = (id) => {
     setOpenActions(openActions === id ? null : id);
   };
 
+  const fetchDelete = async (id) => {
+    await fetch(`${url}/${id}`, {
+      method: "DELETE",
+      headers: {
+        "Content-Type": "application/json",
+        Accept: "application/json",
+      },
+      body: JSON.stringify({ csrf_token: csrf_token }),
+    })
+      .then((res) => res.json())
+      .then((result) => {
+        if (result.success) {
+          return window.location.reload();
+        }
+
+        return showNotification(result.error);
+      })
+      .catch((error) => showNotification("erreur : " + error));
+  };
+
   const deleteRow = (id) => {
-    // create confirm modal
+    showConfirmDialog({
+      title: "Supprimer l'icône",
+      message: "Êtes-vous sûr de vouloir supprimer cette icône ?",
+      onConfirm: () => {
+        fetchDelete(id);
+      },
+      onCancel: () => {
+        setOpenActions(null);
+      },
+    });
   };
 
   const generateRow = (data) => {
     return data.map((element) => (
-      <tr key={element.id} className="h-12 border-b-[1px] border-stroke">
+      <tr
+        key={element.id}
+        className="h-12 border-b-[1px] border-stroke hover:bg-primary hover:bg-opacity-60 transition-all duration-200 ease-in-out ">
         {generateTd(element)}
         <td className="text-center pr-4 relative">
           <button
@@ -23,10 +56,14 @@ export default function Table({ data, value, url }) {
           </button>
           {openActions === element.id && (
             <div className="absolute bg-primary border-stroke border-[1px] rounded-md right-14 flex flex-col items-start py-2 px-4 gap-1">
-              <a href={`${url}/${element.id}`}>modifier</a>
+              <a
+                href={`${url}/${element.id}`}
+                className="hover:text-button transition-colors duration-200 ease-in-out">
+                modifier
+              </a>
               <hr className="border-stroke border-[1px] w-full" />
               <button
-                className="text-red"
+                className="text-red hover:opacity-80 transition-opacity duration-200 ease-in-out"
                 onClick={() => deleteRow(element.id)}>
                 supprimer
               </button>
@@ -42,15 +79,25 @@ export default function Table({ data, value, url }) {
 
     for (const key in value) {
       if (element.hasOwnProperty(key)) {
-        td.push(
-          <td
-            key={key}
-            className="text-left pl-4 overflow-hidden text-ellipsis">
-            {element[key].length > 20
-              ? element[key].substring(0, 100) + "..."
-              : element[key]}
-          </td>
-        );
+        if (element[key] === true || element[key] === false) {
+          td.push(
+            <td
+              key={key}
+              className="text-left pl-4 overflow-hidden text-ellipsis">
+              {element[key] ? "oui" : "non"}
+            </td>
+          );
+        } else {
+          td.push(
+            <td
+              key={key}
+              className="text-left pl-4 overflow-hidden text-ellipsis">
+              {element[key].length > 20
+                ? element[key].substring(0, 100) + "..."
+                : element[key]}
+            </td>
+          );
+        }
       }
     }
 
@@ -70,8 +117,8 @@ export default function Table({ data, value, url }) {
   };
 
   return (
-    <table className="table-auto w-full rounded-2xl bg-primary font-eudoxus">
-      <thead className="border-b-[1px] border-stroke rounded h-10">
+    <table className="sm:table-auto table-fixed w-full  rounded-2xl bg-primary font-eudoxus">
+      <thead className="border-b-[1px] border-stroke rounded h-10 w-full">
         <tr>
           {generateTh()}
           <th className="pr-4 w-10">actions</th>

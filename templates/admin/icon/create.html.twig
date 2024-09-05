@@ -11,5 +11,5 @@
 {% endblock %}
 
 {% block main %}
-	<div {{ react_component("Icon/CreateIcon", { csrf_token : csrf_token('create_icon')}) }}></div>
+	<div {{ react_component("Icon/IconForm", { csrf_token : csrf_token('create_icon')} ) }}></div>
 {% endblock %}

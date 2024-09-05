@@ -8,6 +8,7 @@ export default function AboutForm({
 }) {
   const [value, setValue] = useState("");
   const [error, setError] = useState(null);
+  const [disableForm, setDisableForm] = useState(false);
   const onChange = value => {
     setError(inputValidation.about(value.trim()));
     setValue(value);
@@ -20,19 +21,28 @@ export default function AboutForm({
       return;
     }
     saveBtn.disabled = true;
+    setDisableForm(true);
     await fetch("/admin/about", {
       method: "POST",
       body: JSON.stringify({
         content: value,
         csrf_token: csrf_token
-      })
+      }),
+      headers: {
+        "Content-Type": "application/json",
+        Accept: "application/json"
+      }
     }).then(res => res.json()).then(result => {
       if (result.success) {
         return showNotification("Le contenu du a propos a été modifié");
       }
       return showNotification(result.error);
-    }).catch(error => showNotification("erreur : " + error));
-    saveBtn.disabled = false;
+    }).catch(error => {
+      showNotification("erreur : " + error);
+    }).finally(() => {
+      setDisableForm(false);
+      saveBtn.disabled = false;
+    });
   };
   useEffect(() => {
     setValue(about);
@@ -48,12 +58,13 @@ export default function AboutForm({
       }
     };
   }, [value]);
-  return /*#__PURE__*/React.createElement("form", {
+  return /*#__PURE__*/React.createElement("div", {
     className: "w-full h-full sticky top-0 z-30 font-eudoxus"
   }, /*#__PURE__*/React.createElement("label", {
     htmlFor: "container",
     className: "flex flex-col gap-2 mb-2 w-full text-sm font-medium"
   }, "contenu du \xE0 propos"), /*#__PURE__*/React.createElement(QuillEditor, {
+    disabled: disableForm,
     onChange: onChange,
     value: value
   }), error && /*#__PURE__*/React.createElement("small", {

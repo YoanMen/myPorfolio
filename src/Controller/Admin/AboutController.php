@@ -42,8 +42,8 @@ class AboutController extends AbstractController
             }
 
             return $this->json(['success' => false, 'error' => 'Les données fournies ne sont pas correctes'], 406);
-        } else {
-            return $this->json(['success' => false, 'error' => 'La clé CSRF n\'est pas valide'], 401);
         }
+
+        return $this->json(['success' => false, 'error' => 'La clé CSRF n\'est pas valide'], 401);
     }
 }

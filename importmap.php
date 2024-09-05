@@ -29,7 +29,7 @@ return [
         'version' => '8.0.5',
     ],
     'react' => [
-        'version' => '18.3.1',
+        'version' => '18.2.0',
     ],
     'react-dom' => [
         'version' => '18.2.0',
@@ -104,5 +104,8 @@ return [
     ],
     'content-type' => [
         'version' => '1.0.5',
+    ],
+    'classnames' => [
+        'version' => '2.3.2',
     ],
 ];

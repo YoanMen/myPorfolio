@@ -1,17 +1,29 @@
-import React from "react";
+import React, { useState } from "react";
 import "../../../styles/toggleSwitch.css";
 export default function ToggleSwitch({
   id,
-  label,
+  name,
+  onChange,
+  className,
   checked,
-  onChange
+  disabled
 }) {
+  const [isChecked, setIsChecked] = useState(checked);
+  const onHandleChange = value => {
+    setIsChecked(value.target.checked);
+    onChange(value.target.checked);
+  };
   return /*#__PURE__*/React.createElement("label", {
-    class: "switch"
+    form: id,
+    className: "toggle-switch " + className
   }, /*#__PURE__*/React.createElement("input", {
-    className: "bg-secondary",
-    type: "checkbox"
+    id: id,
+    name: name,
+    type: "checkbox",
+    onChange: onHandleChange,
+    checked: isChecked,
+    disabled: disabled
   }), /*#__PURE__*/React.createElement("span", {
-    class: "slider round"
+    class: "toggle"
   }));
 }

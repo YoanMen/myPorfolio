@@ -10,4 +10,6 @@
 	<twig:Button:PrimaryButton id="saveBtn" label="modifier l'icône"/>
 {% endblock %}
 
-{% block main %}{% endblock %}
+{% block main %}
+	<div {{ react_component("Icon/IconForm", { update: true, csrf_token : csrf_token('update_icon'), icon : icon} ) }}></div>
+{% endblock %}

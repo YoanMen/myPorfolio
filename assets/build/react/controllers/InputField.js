@@ -7,7 +7,8 @@ export default function InputField({
   onChange,
   error,
   disabled,
-  autoFocus
+  autoFocus,
+  value
 }) {
   return /*#__PURE__*/React.createElement("label", {
     htmlFor: id,
@@ -21,7 +22,8 @@ export default function InputField({
     name: id,
     id: id,
     type: type,
-    className: "bg-primary h-10 rounded-md border-stroke border-[1px] px-2 disabled:opacity-50"
+    className: "bg-primary h-10 rounded-md border-stroke border-[1px] px-2 disabled:opacity-50",
+    value: value
   }), error && /*#__PURE__*/React.createElement("small", {
     className: "text-red"
   }, error));

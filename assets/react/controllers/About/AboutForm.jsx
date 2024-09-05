@@ -6,6 +6,7 @@ import { inputValidation } from "../../../../scripts/inputValidation.js";
 export default function AboutForm({ about, csrf_token }) {
   const [value, setValue] = useState("");
   const [error, setError] = useState(null);
+  const [disableForm, setDisableForm] = useState(false);
 
   const onChange = (value) => {
     setError(inputValidation.about(value.trim()));
@@ -23,10 +24,15 @@ export default function AboutForm({ about, csrf_token }) {
     }
 
     saveBtn.disabled = true;
+    setDisableForm(true);
 
     await fetch("/admin/about", {
       method: "POST",
       body: JSON.stringify({ content: value, csrf_token: csrf_token }),
+      headers: {
+        "Content-Type": "application/json",
+        Accept: "application/json",
+      },
     })
       .then((res) => res.json())
       .then((result) => {
@@ -36,9 +42,13 @@ export default function AboutForm({ about, csrf_token }) {
 
         return showNotification(result.error);
       })
-      .catch((error) => showNotification("erreur : " + error));
-
-    saveBtn.disabled = false;
+      .catch((error) => {
+        showNotification("erreur : " + error);
+      })
+      .finally(() => {
+        setDisableForm(false);
+        saveBtn.disabled = false;
+      });
   };
 
   useEffect(() => {
@@ -60,14 +70,14 @@ export default function AboutForm({ about, csrf_token }) {
   }, [value]);
 
   return (
-    <form className="w-full h-full sticky top-0 z-30 font-eudoxus">
+    <div className="w-full h-full sticky top-0 z-30 font-eudoxus">
       <label
         htmlFor="container"
         className="flex flex-col gap-2 mb-2 w-full text-sm font-medium">
         contenu du à propos
       </label>
-      <QuillEditor onChange={onChange} value={value} />
+      <QuillEditor disabled={disableForm} onChange={onChange} value={value} />
       {error && <small className="text-red">{error}</small>}
-    </form>
+    </div>
   );
 }

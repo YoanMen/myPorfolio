@@ -11,5 +11,6 @@
 {% endblock %}
 
 {% block main %}
-	<div {{ react_component("Table", {data: icons, value: { id: 'id' , name: 'nom' } , url: "icon" } ) }}></div>
+	<div {{ react_component("Table", { csrf_token : csrf_token("icon_delete") ,data: icons , value: { name: 'nom', isTechnology: 'technologie' } , url: "icon" } ) }}></div>
+	<twig:Paginator page="{{ page }}" maxpage="{{ maxPage }}"/>
 {% endblock %}
