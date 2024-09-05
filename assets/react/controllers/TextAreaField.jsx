@@ -6,6 +6,7 @@ export default function TextAreaField({
   onChange,
   error,
   disabled,
+  value,
 }) {
   return (
     <label
@@ -19,7 +20,9 @@ export default function TextAreaField({
         }}
         name={id}
         id={id}
-        className="bg-primary h-60 rounded-lg border-stroke border-[1px] p-2 resize-none disabled:opacity-50"></textarea>
+        className="bg-primary h-60 rounded-lg border-stroke border-[1px] p-2 resize-none disabled:opacity-50">
+        {value}
+      </textarea>
       {error && <small className="text-red">{error}</small>}
     </label>
   );

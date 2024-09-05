@@ -4,7 +4,8 @@ export default function TextAreaField({
   id = "",
   onChange,
   error,
-  disabled
+  disabled,
+  value
 }) {
   return /*#__PURE__*/React.createElement("label", {
     htmlFor: id,
@@ -17,7 +18,7 @@ export default function TextAreaField({
     name: id,
     id: id,
     className: "bg-primary h-60 rounded-lg border-stroke border-[1px] p-2 resize-none disabled:opacity-50"
-  }), error && /*#__PURE__*/React.createElement("small", {
+  }, value), error && /*#__PURE__*/React.createElement("small", {
     className: "text-red"
   }, error));
 }

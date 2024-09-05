@@ -17,7 +17,8 @@ const modules = {
 const formats = ["header", "bold", "italic", "underline", "strike", "blockquote", "list", "bullet", "indent", "link", "image", "code-block"];
 export default function QuillEditor({
   onChange,
-  value
+  value,
+  disabled
 }) {
   const [isFocused, setIsFocused] = useState(false); // État pour vérifier si Quill est en focus
 
@@ -27,10 +28,10 @@ export default function QuillEditor({
   const handleBlur = () => {
     setIsFocused(false);
   };
-  return /*#__PURE__*/React.createElement("div", {
+  return /*#__PURE__*/React.createElement(ReactQuill, {
+    disabled: disabled,
+    className: "w-full h-full border-stroke border-[1px] rounded-md  bg-secondary font-eudoxus " + (isFocused ? " border-white border-opacity-50 border-[1px]" : "") + (disabled ? "opacity-50" : ""),
     id: "container",
-    className: "w-full h-full border-stroke border-[1px] rounded-md p-4 bg-secondary " + (isFocused ? " border-white border-opacity-50 border-[1px]" : "")
-  }, /*#__PURE__*/React.createElement(ReactQuill, {
     bounds: "#container",
     theme: "bubble",
     modules: modules,
@@ -39,5 +40,5 @@ export default function QuillEditor({
     onChange: onChange,
     onFocus: handleFocus,
     onBlur: handleBlur
-  }));
+  });
 }

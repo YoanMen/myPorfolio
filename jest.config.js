@@ -4,5 +4,8 @@ module.exports = {
   },
   testPathIgnorePatterns: [
     '/babel.config.test.js$'
-  ]
+  ],
+  transformIgnorePatterns: [
+    "/node_modules/(?!is-svg)"
+  ],
 };

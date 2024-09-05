@@ -1,0 +1,20 @@
+<div id="paginator" class="flex mt-auto justify-end items-end gap-4 ">
+	{% if page > 1 %}
+		<twig:Button:PrimaryButton id="previous" label="Précédent" url="?page={{ page - 1 }}"/>
+	{% endif %}
+
+	<span class="text-center">
+		page
+		<strong>
+			{{ page }}
+		</strong>
+		sur
+		<strong>
+			{{ maxpage }}
+		</strong>
+	</span>
+
+	{% if page < maxpage %}
+		<twig:Button:PrimaryButton id="previous" label="Suivante" url="?page={{ page + 1 }}"/>
+	{% endif %}
+</div>

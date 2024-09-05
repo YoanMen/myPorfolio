@@ -1,6 +1,5 @@
 import { inputValidation } from '../assets/scripts/inputValidation.js';
 
-
 describe('mail check', () => {
 
   it("check mail input with no value", () => {

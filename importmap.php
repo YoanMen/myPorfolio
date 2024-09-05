@@ -78,4 +78,34 @@ return [
         'version' => '2.0.0',
         'type' => 'css',
     ],
+    'is-svg' => [
+        'version' => '5.1.0',
+    ],
+    'fast-xml-parser' => [
+        'version' => '4.4.1',
+    ],
+    'strnum' => [
+        'version' => '1.0.5',
+    ],
+    '@babel/runtime/helpers/objectWithoutPropertiesLoose' => [
+        'version' => '7.24.5',
+    ],
+    '@babel/runtime/helpers/extends' => [
+        'version' => '7.24.5',
+    ],
+    '@babel/runtime/helpers/inheritsLoose' => [
+        'version' => '7.24.5',
+    ],
+    '@tanem/svg-injector' => [
+        'version' => '10.1.68',
+    ],
+    'tslib' => [
+        'version' => '2.6.2',
+    ],
+    'content-type' => [
+        'version' => '1.0.5',
+    ],
+    'classnames' => [
+        'version' => '2.3.2',
+    ],
 ];
