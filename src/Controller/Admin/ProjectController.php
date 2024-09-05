@@ -2,63 +2,58 @@
 
 namespace App\Controller\Admin;
 
-use App\Entity\Icon;
-use App\Repository\IconRepository;
+use App\Entity\Project;
+use App\Repository\ProjectRepository;
 use Doctrine\ORM\EntityManagerInterface;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
-class IconController extends AbstractController
+class ProjectController extends AbstractController
 {
-    #[Route('/admin/icon', name: 'app_admin.icon')]
-    public function index(IconRepository $iconRepository, Request $request): Response
+    #[Route('/admin/project', name: 'app_admin.project')]
+    public function index(Request $request, ProjectRepository $projectRepository): Response
     {
+
         $page = $request->query->getInt('page', 1);
-        $iconsEntities = $iconRepository->paginateIcon($page, 10);
-        $maxPage = ceil($iconsEntities->count() / 10);
+        $projectsEntities = $projectRepository->paginateProject($page, 10);
+        $maxPage = ceil($projectsEntities->count() / 10);
 
-        $icons = [];
+        $projects = [];
 
-        foreach ($iconsEntities as $icon) {
-            $icons[] =
+        foreach ($projectsEntities as $project) {
+            $projects[] =
                 [
-                    'id' => $icon->getId(),
-                    'name' => $icon->getName(),
-                    'svg' => $icon->getSvg(),
-                    'isTechnology' => $icon->isTechnology(),
+                    'id' => $project->getId(),
+                    'name' => $project->getName(),
                 ];
         }
 
-        return $this->render('admin/icon/index.html.twig', [
-            'icons' => $icons,
+
+        return $this->render('admin/project/index.html.twig', [
+            'projects' => $projects,
             'page' => $page,
             'maxPage' => $maxPage,
         ]);
     }
 
-    #[Route('/admin/icon/create', name: 'app_admin.icon.create')]
+    #[Route('/admin/project/create', name: 'app_admin.project.create')]
     public function create(ValidatorInterface $validator, EntityManagerInterface $entityManager, Request $request): Response|JsonResponse
     {
         if ('POST' == $_SERVER['REQUEST_METHOD']) {
             $data = json_decode($request->getContent(), true);
 
             $csrf = $data['csrf_token'];
-            $name = htmlspecialchars(trim($data['name']));
-            $svg = strip_tags(trim($data['svg']), '<svg><path><rect>');
-            $isTechnology = $data['isTechnology'];
 
-            if ($this->isCsrfTokenValid('create_icon', $csrf)) {
+
+            if ($this->isCsrfTokenValid('create_project', $csrf)) {
                 try {
-                    $icon = new Icon();
-                    $icon->setName($name);
-                    $icon->setSvg($svg);
-                    $icon->setTechnology($isTechnology);
+                    $project = new Project();
 
-                    $errors = $validator->validate($icon);
+                    $errors = $validator->validate($project);
 
                     if (count($errors) > 0) {
                         $errorsList = [];
@@ -70,12 +65,12 @@ class IconController extends AbstractController
                         return $this->json(['success' => false, 'error' => $errorsList], 500);
                     }
 
-                    $entityManager->persist($icon);
+                    $entityManager->persist($project);
                     $entityManager->flush();
 
                     $this->addFlash(
                         'message',
-                        $icon->getName() . ' a été créée'
+                        $project->getName() . ' a été créée'
                     );
 
                     return $this->json(['success' => true]);
@@ -87,29 +82,25 @@ class IconController extends AbstractController
             return $this->json(['success' => false, 'error' => 'La clé CSRF n\'est pas valide'], 401);
         }
 
-        return $this->render('admin/icon/create.html.twig', []);
+        return $this->render('admin/project/create.html.twig', []);
     }
 
-    #[Route('/admin/icon/{id}', methods: ['GET', 'POST'], name: 'app_admin.icon.update')]
+    #[Route('/admin/project/{id}', methods: ['GET', 'POST'], name: 'app_admin.project.update')]
     public function update(ValidatorInterface $validator, EntityManagerInterface $entityManager, int $id, Request $request): Response|JsonResponse
     {
-        $icon = $entityManager->getRepository(Icon::class)->findOneBy(['id' => $id]);
+        $project = $entityManager->getRepository(Project::class)->findOneBy(['id' => $id]);
 
         if ('POST' == $_SERVER['REQUEST_METHOD']) {
             $data = json_decode($request->getContent(), true);
 
             $csrf = $data['csrf_token'];
-            $name = htmlspecialchars(trim($data['name']));
-            $svg = strip_tags(trim($data['svg']), '<svg><path><rect>');
-            $isTechnology = $data['isTechnology'];
 
-            if ($this->isCsrfTokenValid('update_icon', $csrf)) {
+
+            if ($this->isCsrfTokenValid('update_project', $csrf)) {
                 try {
-                    $icon->setName($name);
-                    $icon->setSvg($svg);
-                    $icon->setTechnology($isTechnology);
 
-                    $errors = $validator->validate($icon);
+
+                    $errors = $validator->validate($project);
 
                     if (count($errors) > 0) {
                         $errorsList = [];
@@ -125,7 +116,7 @@ class IconController extends AbstractController
 
                     $this->addFlash(
                         'message',
-                        $icon->getName() . ' a été modifiée' . $errors
+                        $project->getName() . ' a été modifiée' . $errors
                     );
 
                     return $this->json(['success' => true]);
@@ -138,16 +129,14 @@ class IconController extends AbstractController
         }
 
         return $this->render('admin/icon/update.html.twig', [
-            'icon' => [
-                'id' => $icon->getId(),
-                'name' => $icon->getName(),
-                'svg' => $icon->getSvg(),
-                'isTechnology' => $icon->isTechnology(),
+            'project' => [
+                'id' => $project->getId(),
+                'name' => $project->getName(),
             ],
         ]);
     }
 
-    #[Route('/admin/icon/{id}', methods: ['DELETE'], name: 'app_admin.icon.delete')]
+    #[Route('/admin/project/{id}', methods: ['DELETE'], name: 'app_admin.project.delete')]
     public function remove(int $id, EntityManagerInterface $entityManager, Request $request): JsonResponse
     {
         $data = json_decode($request->getContent(), true);
@@ -155,13 +144,13 @@ class IconController extends AbstractController
 
         if ($this->isCsrfTokenValid('icon_delete', $csrf)) {
             try {
-                $icon = $entityManager->getRepository(Icon::class)->findOneBy(['id' => $id]);
-                $entityManager->remove($icon);
+                $project = $entityManager->getRepository(Project::class)->findOneBy(['id' => $id]);
+                $entityManager->remove($project);
                 $entityManager->flush();
 
                 $this->addFlash(
                     'message',
-                    $icon->getName() . ' a été supprimée'
+                    $project->getName() . ' a été supprimée'
                 );
 
                 return $this->json(['success' => true]);
