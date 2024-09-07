@@ -13,11 +13,15 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
+use App\Util\UnwantedTags;
 
 class ProjectController extends AbstractController
 {
+
+    private UnwantedTags $unwantedTags;
     public function __construct(private EntityManagerInterface $entityManager, private IconRepository $iconRepository, private ValidatorInterface $validator)
     {
+        $this->unwantedTags = new UnwantedTags();
     }
 
     #[Route('/admin/project', name: 'app_admin.project')]
@@ -56,7 +60,7 @@ class ProjectController extends AbstractController
             $csrf = $data['csrf_token'];
             $name = htmlspecialchars($data['name']);
             $slug = htmlspecialchars($data['slug']);
-            $content = $data['content'];
+            $content = $this->unwantedTags->strip_unwanted_tags($data['content'], ["iframe", "script"]);
             $links = $data['links'];
             $technologies = $data['technologies'];
             $isVisible = $data['isVisible'];
@@ -89,7 +93,7 @@ class ProjectController extends AbstractController
 
                     $this->addFlash(
                         'message',
-                        'Le projet '.$project->getName().' a été créée'
+                        'Le projet ' . $project->getName() . ' a été créée'
                     );
 
                     return $this->json(['success' => true]);
@@ -115,7 +119,8 @@ class ProjectController extends AbstractController
             $csrf = $data['csrf_token'];
             $name = htmlspecialchars($data['name']);
             $slug = htmlspecialchars($data['slug']);
-            $content = $data['content'];
+            $content = $this->unwantedTags->strip_unwanted_tags($data['content'], ["iframe", "script"]);
+
             $links = $data['links'];
             $technologies = $data['technologies'];
             $isVisible = $data['isVisible'];
@@ -150,12 +155,12 @@ class ProjectController extends AbstractController
 
                     $this->addFlash(
                         'message',
-                        'Le projet '.$project->getName().' a été modifiée'.$errors
+                        'Le projet ' . $project->getName() . ' a été modifiée' . $errors
                     );
 
                     return $this->json(['success' => true]);
                 } catch (\Throwable $th) {
-                    return $this->json(['success' => false, 'error' => 'impossible de sauvegarder les données, une erreur interne est survenue '.$th->getMessage()], 500);
+                    return $this->json(['success' => false, 'error' => 'impossible de sauvegarder les données, une erreur interne est survenue ' . $th->getMessage()], 500);
                 }
             }
 
@@ -189,7 +194,7 @@ class ProjectController extends AbstractController
 
                 $this->addFlash(
                     'message',
-                    'Le projet '.$project->getName().' a été supprimée'
+                    'Le projet ' . $project->getName() . ' a été supprimée'
                 );
 
                 return $this->json(['success' => true]);
@@ -210,9 +215,10 @@ class ProjectController extends AbstractController
     {
         foreach ($links as $element) {
             $icon = $this->iconRepository->findOneBy(['id' => $element['id']]);
+            $url = $this->unwantedTags->strip_unwanted_tags($element['url'], ["iframe", "script"]);
 
             $link = new Link();
-            $link->setUrl($element['url']);
+            $link->setUrl($url);
             $link->setIcon($icon);
             $link->setProject($project);
 

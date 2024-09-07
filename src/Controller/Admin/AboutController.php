@@ -10,11 +10,16 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
+use App\Util\UnwantedTags;
+use Symfony\Component\Validator\Validator\ValidatorInterface;
+
 
 class AboutController extends AbstractController
 {
-    public function __construct(private EntityManagerInterface $entityManager, private AboutRepository $repository)
+    private UnwantedTags $unwantedTags;
+    public function __construct(private EntityManagerInterface $entityManager, private AboutRepository $repository, private ValidatorInterface $validator)
     {
+        $this->unwantedTags = new UnwantedTags();
     }
 
     #[Route('/admin/about', methods: ['GET'], name: 'app_admin.about')]
@@ -29,23 +34,34 @@ class AboutController extends AbstractController
     public function save(Request $request): JsonResponse
     {
         $data = json_decode($request->getContent(), true);
-        $value = strlen(strip_tags($data['content']));
+        $content = $this->unwantedTags->strip_unwanted_tags($data['content'], ["iframe", "script"]);
+
         $csrf = $data['csrf_token'];
 
         if ($this->isCsrfTokenValid('about', $csrf)) {
-            if ($value > 0 && $value < 1000) {
-                try {
-                    $about = $this->entityManager->getRepository(About::class)->find(['id' => 1]);
-                    $about->setContent($data['content']);
-                    $this->entityManager->flush();
+            try {
+                $about = $this->entityManager->getRepository(About::class)->find(['id' => 1]);
+                $about->setContent($content);
 
-                    return $this->json(['success' => true]);
-                } catch (\Throwable $th) {
-                    return $this->json(['success' => false, 'error' => 'impossible de sauvegarder les données, une erreur interne est survenue'], 500);
+                $errors = $this->validator->validate($about);
+
+                if (count($errors) > 0) {
+                    $errorsList = [];
+
+                    foreach ($errors as $error) {
+                        $errorsList[] = $error->getMessage();
+                    }
+
+                    return $this->json(['success' => false, 'error' => $errorsList], 500);
                 }
-            }
 
-            return $this->json(['success' => false, 'error' => 'Les données fournies ne sont pas correctes'], 406);
+
+                $this->entityManager->flush();
+
+                return $this->json(['success' => true]);
+            } catch (\Throwable $th) {
+                return $this->json(['success' => false, 'error' => 'impossible de sauvegarder les données, une erreur interne est survenue'], 500);
+            }
         }
 
         return $this->json(['success' => false, 'error' => 'La clé CSRF n\'est pas valide'], 401);
