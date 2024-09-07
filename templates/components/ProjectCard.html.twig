@@ -1,15 +1,15 @@
-<a aria-label="Cliquez pour en savoir plus" href="{{project.slug}}">
+<a aria-label="Cliquez pour en savoir plus" href="{{project.getSlug()}}">
 	<article class="w-full rounded-lg border-color border-[1px] border-stroke hover:bg-[#484f6050] hover:border-[#484f6050] p-4 bg-primary max-md:p-2 my-3 last:mb-0 cursor-pointer group transition-all duration-150 ease-in-out">
 		<header class="flex justify-between items-center mb-4">
-			<h3 class="text-xl font-semibold">{{ project.title }}</h3>
+			<h3 class="text-xl font-semibold">{{ project.getName() }}</h3>
 			<svg aria-label="icon flèche" class="rotate-45 group-hover:rotate-[60deg] transition-transform ease-in-out duration-150 " xmlns="http://www.w3.org/2000/svg" width="24px" height="24px" viewbox="0 0 256 256">
 				<path fill="currentColor" d="M205.66 117.66a8 8 0 0 1-11.32 0L136 59.31V216a8 8 0 0 1-16 0V59.31l-58.34 58.35a8 8 0 0 1-11.32-11.32l72-72a8 8 0 0 1 11.32 0l72 72a8 8 0 0 1 0 11.32"></path>
 			</svg>
 		</header>
-		<p class="leading-8 line-clamp-2 text-left">{{ project.content }}
+		<p class="leading-8 line-clamp-2 text-left">{{ project.getContent() }}
 		</p>
 		<ul class="mt-4 flex gap-2 flex-wrap">
-			{% for technology in project.technologies %}
+			{% for technology in project.getTechnologies() %}
 				<twig:TechnologyItem technology="{{ technology }}"/>
 			{% endfor %}
 		</ul>

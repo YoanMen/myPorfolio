@@ -1,16 +1,16 @@
 {% extends 'admin/base.html.twig' %}
 
-{% block title %}Yoan Ménard - projets
+{% block title %}Yoan Ménard - gestion des projets
 {% endblock %}
 
 {% block pageTitle %}
 	Gestion des projets
 {% endblock %}
 {% block actionsBtn %}
-	<twig:Button:PrimaryButton id="saveBtn" label="créer un projet" url="{{ url("app_admin.project.create") }}"/>
+	<twig:Button:PrimaryButton id="saveBtn" label="nouveau projet" url="{{ url("app_admin.project.create") }}"/>
 {% endblock %}
 
 {% block main %}
-	<div {{ react_component("Table", { csrf_token : csrf_token("project_delete") ,data: projects , value: { name: 'nom' } , url: "project" } ) }}></div>
+	<div {{ react_component("Table", { csrf_token : csrf_token("project_delete") ,data: projects , value: { name: 'nom', slug: 'slug' , content : 'contenu', isVisible : 'publier'} , url: "project" } ) }}></div>
 	<twig:Paginator page="{{ page }}" maxpage="{{ maxPage }}"/>
 {% endblock %}

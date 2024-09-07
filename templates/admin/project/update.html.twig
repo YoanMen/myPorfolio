@@ -1,13 +1,14 @@
 {% extends 'admin/base.html.twig' %}
 
-{% block title %}Yoan Ménard - icônes
+{% block title %}Yoan Ménard - modification d'un projet
 {% endblock %}
 
 {% block pageTitle %}
-	Modification d'une icône
+	Modification du projet
+	{{ project.name }}
 {% endblock %}
 {% block actionsBtn %}
-	<twig:Button:PrimaryButton id="saveBtn" label="modifier l'icône"/>
+	<twig:Button:PrimaryButton id="saveBtn" label="modifier le projet"/>
 {% endblock %}
 
 {% block main %}

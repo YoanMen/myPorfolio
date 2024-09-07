@@ -30,7 +30,7 @@ export default function QuillEditor({
   };
   return /*#__PURE__*/React.createElement(ReactQuill, {
     disabled: disabled,
-    className: "w-full h-full border-stroke border-[1px] rounded-md  bg-secondary font-eudoxus " + (isFocused ? " border-white border-opacity-50 border-[1px]" : "") + (disabled ? "opacity-50" : ""),
+    className: "w-full h-full border-stroke border-[1px] rounded-md bg-primary    font-eudoxus " + (isFocused ? " border-white border-opacity-50 border-[1px]" : "") + (disabled ? "opacity-50" : ""),
     id: "container",
     bounds: "#container",
     theme: "bubble",

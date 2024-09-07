@@ -59,7 +59,7 @@ export default function AboutForm({
     };
   }, [value]);
   return /*#__PURE__*/React.createElement("div", {
-    className: "w-full h-full sticky top-0 z-30 font-eudoxus"
+    className: "font-eudoxus"
   }, /*#__PURE__*/React.createElement("label", {
     htmlFor: "container",
     className: "flex flex-col gap-2 mb-2 w-full text-sm font-medium"

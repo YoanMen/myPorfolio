@@ -14,7 +14,7 @@ export default function InputField({
   return (
     <label
       htmlFor={id}
-      className={`flex flex-col gap-2 mb-2 w-full text-sm font-medium ${className}`}>
+      className={`  flex flex-col gap-2 mb-2 w-full text-sm font-medium ${className}`}>
       {label}
       <input
         autoFocus={autoFocus}
@@ -28,7 +28,7 @@ export default function InputField({
         className="bg-primary h-10 rounded-md border-stroke border-[1px] px-2 disabled:opacity-50"
         value={value}
       />
-      {error && <small className="text-red">{error}</small>}
+      {error && <small className="text-red ">{error}</small>}
     </label>
   );
 }

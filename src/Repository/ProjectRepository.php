@@ -17,7 +17,12 @@ class ProjectRepository extends ServiceEntityRepository
         parent::__construct($registry, Project::class);
     }
 
-    public function paginateProject($page, $limit): Paginator
+    /**
+     * paginateProject.
+     *
+     * @return Paginator<Project>
+     */
+    public function paginateProject(int $page, int $limit): Paginator
     {
         return new Paginator($this
             ->createQueryBuilder('p')

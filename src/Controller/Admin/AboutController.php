@@ -13,16 +13,20 @@ use Symfony\Component\Routing\Attribute\Route;
 
 class AboutController extends AbstractController
 {
-    #[Route('/admin/about', methods: ['GET'], name: 'app_admin.about')]
-    public function index(AboutRepository $repository): Response
+    public function __construct(private EntityManagerInterface $entityManager, private AboutRepository $repository)
     {
-        $about = $repository->findOneBy(['id' => 1]);
+    }
+
+    #[Route('/admin/about', methods: ['GET'], name: 'app_admin.about')]
+    public function index(): Response
+    {
+        $about = $this->repository->findOneBy(['id' => 1]);
 
         return $this->render('admin/about/index.html.twig', ['about' => $about]);
     }
 
     #[Route('/admin/about', methods: ['POST'], name: 'app_admin.about.save')]
-    public function save(Request $request, EntityManagerInterface $manager): JsonResponse
+    public function save(Request $request): JsonResponse
     {
         $data = json_decode($request->getContent(), true);
         $value = strlen(strip_tags($data['content']));
@@ -31,9 +35,9 @@ class AboutController extends AbstractController
         if ($this->isCsrfTokenValid('about', $csrf)) {
             if ($value > 0 && $value < 1000) {
                 try {
-                    $about = $manager->getRepository(About::class)->find(['id' => 1]);
+                    $about = $this->entityManager->getRepository(About::class)->find(['id' => 1]);
                     $about->setContent($data['content']);
-                    $manager->flush();
+                    $this->entityManager->flush();
 
                     return $this->json(['success' => true]);
                 } catch (\Throwable $th) {

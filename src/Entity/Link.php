@@ -20,6 +20,10 @@ class Link
     #[ORM\JoinColumn(nullable: false)]
     private ?Project $project = null;
 
+    #[ORM\ManyToOne(inversedBy: 'links')]
+    #[ORM\JoinColumn(nullable: false)]
+    private ?Icon $icon = null;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -45,6 +49,18 @@ class Link
     public function setProject(?Project $project): static
     {
         $this->project = $project;
+
+        return $this;
+    }
+
+    public function getIcon(): ?Icon
+    {
+        return $this->icon;
+    }
+
+    public function setIcon(?Icon $icon): static
+    {
+        $this->icon = $icon;
 
         return $this;
     }

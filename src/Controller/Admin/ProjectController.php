@@ -2,22 +2,27 @@
 
 namespace App\Controller\Admin;
 
+use App\Entity\Link;
 use App\Entity\Project;
+use App\Repository\IconRepository;
 use App\Repository\ProjectRepository;
 use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
-use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 class ProjectController extends AbstractController
 {
+    public function __construct(private EntityManagerInterface $entityManager, private IconRepository $iconRepository, private ValidatorInterface $validator)
+    {
+    }
+
     #[Route('/admin/project', name: 'app_admin.project')]
     public function index(Request $request, ProjectRepository $projectRepository): Response
     {
-
         $page = $request->query->getInt('page', 1);
         $projectsEntities = $projectRepository->paginateProject($page, 10);
         $maxPage = ceil($projectsEntities->count() / 10);
@@ -29,9 +34,11 @@ class ProjectController extends AbstractController
                 [
                     'id' => $project->getId(),
                     'name' => $project->getName(),
+                    'slug' => $project->getSlug(),
+                    'isVisible' => $project->isVisible(),
+                    'content' => $project->getContent(),
                 ];
         }
-
 
         return $this->render('admin/project/index.html.twig', [
             'projects' => $projects,
@@ -41,19 +48,31 @@ class ProjectController extends AbstractController
     }
 
     #[Route('/admin/project/create', name: 'app_admin.project.create')]
-    public function create(ValidatorInterface $validator, EntityManagerInterface $entityManager, Request $request): Response|JsonResponse
+    public function create(Request $request): Response|JsonResponse
     {
         if ('POST' == $_SERVER['REQUEST_METHOD']) {
             $data = json_decode($request->getContent(), true);
 
             $csrf = $data['csrf_token'];
-
+            $name = htmlspecialchars($data['name']);
+            $slug = htmlspecialchars($data['slug']);
+            $content = $data['content'];
+            $links = $data['links'];
+            $technologies = $data['technologies'];
+            $isVisible = $data['isVisible'];
 
             if ($this->isCsrfTokenValid('create_project', $csrf)) {
                 try {
                     $project = new Project();
+                    $project->setName($name);
+                    $project->setSlug($slug);
+                    $project->setContent($content);
+                    $project->setVisible($isVisible);
 
-                    $errors = $validator->validate($project);
+                    $this->addLinksToProject($project, $links);
+                    $this->addTechnologiesToProject($project, $technologies);
+
+                    $errors = $this->validator->validate($project);
 
                     if (count($errors) > 0) {
                         $errorsList = [];
@@ -65,12 +84,12 @@ class ProjectController extends AbstractController
                         return $this->json(['success' => false, 'error' => $errorsList], 500);
                     }
 
-                    $entityManager->persist($project);
-                    $entityManager->flush();
+                    $this->entityManager->persist($project);
+                    $this->entityManager->flush();
 
                     $this->addFlash(
                         'message',
-                        $project->getName() . ' a été créée'
+                        'Le projet '.$project->getName().' a été créée'
                     );
 
                     return $this->json(['success' => true]);
@@ -86,21 +105,35 @@ class ProjectController extends AbstractController
     }
 
     #[Route('/admin/project/{id}', methods: ['GET', 'POST'], name: 'app_admin.project.update')]
-    public function update(ValidatorInterface $validator, EntityManagerInterface $entityManager, int $id, Request $request): Response|JsonResponse
+    public function update(int $id, Request $request): Response|JsonResponse
     {
-        $project = $entityManager->getRepository(Project::class)->findOneBy(['id' => $id]);
+        $project = $this->entityManager->getRepository(Project::class)->findOneBy(['id' => $id]);
 
         if ('POST' == $_SERVER['REQUEST_METHOD']) {
             $data = json_decode($request->getContent(), true);
 
             $csrf = $data['csrf_token'];
-
+            $name = htmlspecialchars($data['name']);
+            $slug = htmlspecialchars($data['slug']);
+            $content = $data['content'];
+            $links = $data['links'];
+            $technologies = $data['technologies'];
+            $isVisible = $data['isVisible'];
+            $csrf = $data['csrf_token'];
 
             if ($this->isCsrfTokenValid('update_project', $csrf)) {
                 try {
+                    $project->setName($name);
+                    $project->setSlug($slug);
+                    $project->setContent($content);
+                    $project->setVisible($isVisible);
 
+                    $this->removeLinksFromProject($project, $links);
+                    $this->removeTechnologiesFromProject($project, $technologies);
+                    $this->addLinksToProject($project, $links);
+                    $this->addTechnologiesToProject($project, $technologies);
 
-                    $errors = $validator->validate($project);
+                    $errors = $this->validator->validate($project);
 
                     if (count($errors) > 0) {
                         $errorsList = [];
@@ -112,26 +145,32 @@ class ProjectController extends AbstractController
                         return $this->json(['success' => false, 'error' => $errorsList], 500);
                     }
 
-                    $entityManager->flush();
+                    $this->entityManager->persist($project);
+                    $this->entityManager->flush();
 
                     $this->addFlash(
                         'message',
-                        $project->getName() . ' a été modifiée' . $errors
+                        'Le projet '.$project->getName().' a été modifiée'.$errors
                     );
 
                     return $this->json(['success' => true]);
                 } catch (\Throwable $th) {
-                    return $this->json(['success' => false, 'error' => 'impossible de sauvegarder les données, une erreur interne est survenue'], 500);
+                    return $this->json(['success' => false, 'error' => 'impossible de sauvegarder les données, une erreur interne est survenue '.$th->getMessage()], 500);
                 }
             }
 
             return $this->json(['success' => false, 'error' => 'La clé CSRF n\'est pas valide'], 401);
         }
 
-        return $this->render('admin/icon/update.html.twig', [
+        return $this->render('admin/project/update.html.twig', [
             'project' => [
                 'id' => $project->getId(),
                 'name' => $project->getName(),
+                'slug' => $project->getSlug(),
+                'content' => $project->getContent(),
+                'isVisible' => $project->isVisible(),
+                'technologies' => $this->setTechnologiesAndLinks($project)['technologies'],
+                'links' => $this->setTechnologiesAndLinks($project)['links'],
             ],
         ]);
     }
@@ -142,7 +181,7 @@ class ProjectController extends AbstractController
         $data = json_decode($request->getContent(), true);
         $csrf = $data['csrf_token'];
 
-        if ($this->isCsrfTokenValid('icon_delete', $csrf)) {
+        if ($this->isCsrfTokenValid('project_delete', $csrf)) {
             try {
                 $project = $entityManager->getRepository(Project::class)->findOneBy(['id' => $id]);
                 $entityManager->remove($project);
@@ -150,7 +189,7 @@ class ProjectController extends AbstractController
 
                 $this->addFlash(
                     'message',
-                    $project->getName() . ' a été supprimée'
+                    'Le projet '.$project->getName().' a été supprimée'
                 );
 
                 return $this->json(['success' => true]);
@@ -160,5 +199,108 @@ class ProjectController extends AbstractController
         }
 
         return $this->json(['success' => false, 'error' => 'La clé CSRF n\'est pas valide'], 401);
+    }
+
+    /**
+     * addLinksToProject.
+     *
+     * @param array<mixed> $links
+     */
+    private function addLinksToProject(Project $project, array $links): void
+    {
+        foreach ($links as $element) {
+            $icon = $this->iconRepository->findOneBy(['id' => $element['id']]);
+
+            $link = new Link();
+            $link->setUrl($element['url']);
+            $link->setIcon($icon);
+            $link->setProject($project);
+
+            $project->addLink($link);
+            $this->entityManager->persist($link);
+        }
+    }
+
+    /**
+     * removeLinksFromProject.
+     *
+     * @param array<mixed> $links
+     */
+    private function removeLinksFromProject(Project $project, array $links): void
+    {
+        foreach ($project->getLinks() as $oldLink) {
+            $keep = false;
+
+            foreach ($links as $link) {
+                if ($oldLink->getId() == $link['id']) {
+                    $keep = true;
+                    break;
+                }
+            }
+            if (!$keep) {
+                $project->removeLink($oldLink);
+            }
+        }
+    }
+
+    /**
+     * addTechnologiesToProject.
+     *
+     * @param array<mixed> $technologies
+     */
+    private function addTechnologiesToProject(Project $project, array $technologies): void
+    {
+        foreach ($technologies as $technology) {
+            $icon = $this->iconRepository->findOneBy(['id' => $technology['id']]);
+            $project->addTechnology($icon);
+        }
+    }
+
+    /**
+     * removeTechnologiesFromProject.
+     *
+     * @param array<mixed> $technologies
+     */
+    private function removeTechnologiesFromProject(Project $project, array $technologies): void
+    {
+        foreach ($project->getTechnologies() as $oldTechnology) {
+            $project->removeTechnology($oldTechnology);
+            $keep = false;
+
+            foreach ($technologies as $technology) {
+                if ($oldTechnology->getId() == $technology['id']) {
+                    $keep = true;
+                    break;
+                }
+            }
+
+            if (!$keep) {
+                $project->removeTechnology($oldTechnology);
+            }
+        }
+    }
+
+    /**
+     * setTechnologiesAndLinks.
+     *
+     * @return array<mixed>
+     */
+    private function setTechnologiesAndLinks(Project $project): array
+    {
+        $technologies = [];
+        $links = [];
+
+        foreach ($project->getTechnologies() as $technology) {
+            $technologies[] = ['id' => $technology->getId()];
+        }
+
+        foreach ($project->getLinks() as $link) {
+            $links[] = [
+                'id' => $link->getIcon()->getId(),
+                'url' => $link->getUrl(),
+            ];
+        }
+
+        return ['technologies' => $technologies, 'links' => $links];
     }
 }
