@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
+import SelectItem from "./SelectItem.js";
 import InputField from "../InputField.js";
 import { inputValidation } from "../../../../scripts/inputValidation.js";
 
@@ -101,20 +102,12 @@ export default function ExternalLink({ value, onChange, selectedLinks }) {
   const showLinks = (links) => {
     return links.map((externalLink) => {
       return (
-        <div
-          key={externalLink.id}
-          className="flex gap-2 items-center cursor-pointer w-fit group">
-          <div
-            className="text-3xl fill-text"
-            dangerouslySetInnerHTML={{ __html: externalLink.svg }}
-          />
-          <span>{externalLink.url}</span>
-          <button
-            onClick={() => removeLink(externalLink.id)}
-            className="group-hover:flex hidden text-red hover:opacity-80 transition-opacity duration-200 ease-in-out">
-            supprimer
-          </button>
-        </div>
+        <SelectItem
+          id={externalLink.id}
+          name={externalLink.url}
+          icon={externalLink.svg}
+          onClick={() => removeLink(externalLink.id)}
+        />
       );
     });
   };

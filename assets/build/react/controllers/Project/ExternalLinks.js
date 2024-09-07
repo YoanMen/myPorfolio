@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
+import SelectItem from "./SelectItem.js";
 import InputField from "../InputField.js";
 import { inputValidation } from "../../../../scripts/inputValidation.js";
 export default function ExternalLink({
@@ -95,18 +96,12 @@ export default function ExternalLink({
   };
   const showLinks = links => {
     return links.map(externalLink => {
-      return /*#__PURE__*/React.createElement("div", {
-        key: externalLink.id,
-        className: "flex gap-2 items-center cursor-pointer w-fit group"
-      }, /*#__PURE__*/React.createElement("div", {
-        className: "text-3xl fill-text",
-        dangerouslySetInnerHTML: {
-          __html: externalLink.svg
-        }
-      }), /*#__PURE__*/React.createElement("span", null, externalLink.url), /*#__PURE__*/React.createElement("button", {
-        onClick: () => removeLink(externalLink.id),
-        className: "group-hover:flex hidden text-red hover:opacity-80 transition-opacity duration-200 ease-in-out"
-      }, "supprimer"));
+      return /*#__PURE__*/React.createElement(SelectItem, {
+        id: externalLink.id,
+        name: externalLink.url,
+        icon: externalLink.svg,
+        onClick: () => removeLink(externalLink.id)
+      });
     });
   };
   return /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("label", {

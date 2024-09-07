@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
+import SelectItem from "./SelectItem.js";
 
 export default function Technologies({
   error,
@@ -82,20 +83,12 @@ export default function Technologies({
   const showSelectedTechnologies = (technologies) => {
     return technologies.map((technology) => {
       return (
-        <div
-          key={technology.id}
-          className="flex gap-2 items-center cursor-pointer w-fit group">
-          <div
-            className="text-3xl fill-text"
-            dangerouslySetInnerHTML={{ __html: technology.svg }}
-          />
-          <span>{technology.name}</span>
-          <button
-            onClick={() => removeTechnology(technology.id)}
-            className="group-hover:flex hidden text-red hover:opacity-80 transition-opacity duration-200 ease-in-out">
-            supprimer
-          </button>
-        </div>
+        <SelectItem
+          id={technology.id}
+          name={technology.name}
+          icon={technology.svg}
+          onClick={() => removeTechnology(technology.id)}
+        />
       );
     });
   };
