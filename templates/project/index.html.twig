@@ -1,0 +1,31 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Yoan Ménard -
+	{{ project.name }}
+{% endblock %}
+
+{% block body %}
+	<main class="min-h-screen max-w-screen-sm w-full mx-auto max-md:px-4">
+		<section aria-label="article du projet {{ project.name }}" id="project" name="project" class="max-md:p-2 my-8 lg:pt-32 pt-20 mb-20 flex flex-col">
+			{% if is_granted("ROLE_USER") %}
+				<a id="modification" aria-label="boutton de modification" class="hover:text-white transition-colors duration-150 text-right" href="{{ url("app_admin.project.update", {id: project.id}) }}" data-turbo="false">modifier</a>
+			{% endif %}
+			<header class="flex justify-between max-md:gap-4 items-center max-md:items-start mb-4 max-md:flex-col-reverse">
+				<h1 class="text-2xl text-white font-bold">
+					{{ project.name }}
+				</h1>
+				<ul class="flex gap-2 flex-wrap">
+					{% for link in project.getLinks() %}
+						<twig:LinkItem link="{{ link }}"/>
+					{% endfor    %}
+				</ul>
+			</header>
+			<ul class="mt-4 flex gap-2 flex-wrap mb-10">
+				{% for technology in project.getTechnologies() %}
+					<twig:TechnologyItem technology="{{ technology }}"/>
+				{% endfor %}
+			</ul>
+			{{ project.content | raw }}
+		</section>
+	</main>
+{% endblock %}

@@ -3,7 +3,7 @@ import ReactQuill from "react-quill";
 import "react-quill/dist/quill.bubble.css";
 const modules = {
   toolbar: [[{
-    header: [1, 2, false]
+    header: [2, 3, false]
   }], ["bold", "italic", "underline", "strike", "blockquote", "code-block"], [{
     list: "ordered"
   }, {
@@ -30,7 +30,7 @@ export default function QuillEditor({
   };
   return /*#__PURE__*/React.createElement(ReactQuill, {
     disabled: disabled,
-    className: "w-full h-full border-stroke border-[1px] rounded-md  bg-secondary font-eudoxus " + (isFocused ? " border-white border-opacity-50 border-[1px]" : "") + (disabled ? "opacity-50" : ""),
+    className: "w-full h-full border-stroke border-[1px] rounded-md bg-primary font-eudoxus " + (isFocused ? " border-white border-opacity-50 border-[1px]" : "") + (disabled ? "opacity-50" : ""),
     id: "container",
     bounds: "#container",
     theme: "bubble",

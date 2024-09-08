@@ -4,7 +4,7 @@ import "react-quill/dist/quill.bubble.css";
 
 const modules = {
   toolbar: [
-    [{ header: [1, 2, false] }],
+    [{ header: [2, 3, false] }],
     ["bold", "italic", "underline", "strike", "blockquote", "code-block"],
     [
       { list: "ordered" },
@@ -47,7 +47,7 @@ export default function QuillEditor({ onChange, value, disabled }) {
     <ReactQuill
       disabled={disabled}
       className={
-        "w-full h-full border-stroke border-[1px] rounded-md  bg-secondary font-eudoxus " +
+        "w-full h-full border-stroke border-[1px] rounded-md bg-primary font-eudoxus " +
         (isFocused ? " border-white border-opacity-50 border-[1px]" : "") +
         (disabled ? "opacity-50" : "")
       }

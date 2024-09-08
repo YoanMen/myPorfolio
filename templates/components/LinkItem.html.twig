@@ -1,0 +1,8 @@
+<li class="text-sm flex gap-1 flex-wrap items-center">
+	<a aria-label="lien vers ${{ link.getIcon().getName() }}" href="{{link.getUrl()}}" target="_blank" rel="noopener noreferrer" class="text-sm flex gap-1 items-center hover:text-white transition-colors duration-150">
+		<span class="text-2xl" aria-label="icon {{link.getIcon().getName()}}">
+			{{link.getIcon().getSvg() | raw}}
+		</span>
+		{{link.getIcon().getName()}}
+	</a>
+</li>

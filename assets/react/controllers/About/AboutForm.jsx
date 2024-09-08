@@ -70,7 +70,7 @@ export default function AboutForm({ about, csrf_token }) {
   }, [value]);
 
   return (
-    <div className="w-full h-full sticky top-0 z-30 font-eudoxus">
+    <div className="font-eudoxus">
       <label
         htmlFor="container"
         className="flex flex-col gap-2 mb-2 w-full text-sm font-medium">

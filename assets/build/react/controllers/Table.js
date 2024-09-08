@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { showConfirmDialog } from "./showConfirmDialog.js";
 import showNotification from "./showNotification.js";
 export default function Table({
@@ -8,6 +8,21 @@ export default function Table({
   url
 }) {
   const [openActions, setOpenActions] = useState(null);
+  useEffect(() => {
+    document.addEventListener("click", clickOutside);
+    return () => {
+      document.removeEventListener("click", clickOutside);
+    };
+  }), [openActions];
+  const clickOutside = event => {
+    if (openActions != null) {
+      console.log(event.target.closest("button"));
+      if (!event.target.closest("button")) {
+        setOpenActions(null);
+      }
+      console.log("close action");
+    }
+  };
   const handleActionsToggle = id => {
     setOpenActions(openActions === id ? null : id);
   };
@@ -30,8 +45,8 @@ export default function Table({
   };
   const deleteRow = id => {
     showConfirmDialog({
-      title: "Supprimer l'icône",
-      message: "Êtes-vous sûr de vouloir supprimer cette icône ?",
+      title: "Supprimer cette élément",
+      message: "Êtes-vous sûr de vouloir supprimer cette élément ?",
       onConfirm: () => {
         fetchDelete(id);
       },

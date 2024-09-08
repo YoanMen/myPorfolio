@@ -1,6 +1,6 @@
 <li class="text-sm flex gap-1 flex-wrap items-center">
 	<span class="text-2xl" aria-label="icon {{technology.name}}">
-		{{technology.svg | raw}}
+		{{technology.getSvg() | raw}}
 	</span>
-	{{technology.name}}
+	{{technology.getName()}}
 </li>

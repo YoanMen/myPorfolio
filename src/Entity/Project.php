@@ -7,8 +7,12 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: ProjectRepository::class)]
+#[UniqueEntity('name', message: 'Un projet avec ce nom existe déjà')]
+#[UniqueEntity('slug', message: 'Un projet avec ce slug existe déjà')]
 class Project
 {
     #[ORM\Id]
@@ -17,15 +21,18 @@ class Project
     private ?int $id = null;
 
     #[ORM\Column(length: 60)]
+    #[Assert\Length(max: 60, maxMessage: 'Le nom ne doit pas faire plus de 60 caractères')]
     private ?string $name = null;
 
     #[ORM\Column]
     private ?bool $isVisible = null;
 
     #[ORM\Column(length: 100)]
+    #[Assert\Length(max: 60, maxMessage: 'Le slug ne doit pas faire plus de 100 caractères')]
     private ?string $slug = null;
 
     #[ORM\Column(type: Types::TEXT)]
+    #[Assert\NotBlank()]
     private ?string $content = null;
 
     /**

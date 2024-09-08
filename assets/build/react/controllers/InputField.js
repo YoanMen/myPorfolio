@@ -12,7 +12,7 @@ export default function InputField({
 }) {
   return /*#__PURE__*/React.createElement("label", {
     htmlFor: id,
-    className: `flex flex-col gap-2 mb-2 w-full text-sm font-medium ${className}`
+    className: `  flex flex-col gap-2 mb-2 w-full text-sm font-medium ${className}`
   }, label, /*#__PURE__*/React.createElement("input", {
     autoFocus: autoFocus,
     disabled: disabled,
@@ -25,6 +25,6 @@ export default function InputField({
     className: "bg-primary h-10 rounded-md border-stroke border-[1px] px-2 disabled:opacity-50",
     value: value
   }), error && /*#__PURE__*/React.createElement("small", {
-    className: "text-red"
+    className: "text-red "
   }, error));
 }

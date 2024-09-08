@@ -14,11 +14,15 @@ use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 class IconController extends AbstractController
 {
+    public function __construct(private ValidatorInterface $validator, private EntityManagerInterface $entityManager, private IconRepository $iconRepository)
+    {
+    }
+
     #[Route('/admin/icon', name: 'app_admin.icon')]
-    public function index(IconRepository $iconRepository, Request $request): Response
+    public function index(Request $request): Response
     {
         $page = $request->query->getInt('page', 1);
-        $iconsEntities = $iconRepository->paginateIcon($page, 10);
+        $iconsEntities = $this->iconRepository->paginateIcon($page, 10);
         $maxPage = ceil($iconsEntities->count() / 10);
 
         $icons = [];
@@ -41,13 +45,13 @@ class IconController extends AbstractController
     }
 
     #[Route('/admin/icon/create', name: 'app_admin.icon.create')]
-    public function create(ValidatorInterface $validator, EntityManagerInterface $entityManager, Request $request): Response|JsonResponse
+    public function create(Request $request): Response|JsonResponse
     {
         if ('POST' == $_SERVER['REQUEST_METHOD']) {
             $data = json_decode($request->getContent(), true);
 
             $csrf = $data['csrf_token'];
-            $name = htmlspecialchars(trim($data['name']));
+            $name = strtolower(htmlspecialchars(trim($data['name'])));
             $svg = strip_tags(trim($data['svg']), '<svg><path><rect>');
             $isTechnology = $data['isTechnology'];
 
@@ -58,7 +62,7 @@ class IconController extends AbstractController
                     $icon->setSvg($svg);
                     $icon->setTechnology($isTechnology);
 
-                    $errors = $validator->validate($icon);
+                    $errors = $this->validator->validate($icon);
 
                     if (count($errors) > 0) {
                         $errorsList = [];
@@ -70,8 +74,8 @@ class IconController extends AbstractController
                         return $this->json(['success' => false, 'error' => $errorsList], 500);
                     }
 
-                    $entityManager->persist($icon);
-                    $entityManager->flush();
+                    $this->entityManager->persist($icon);
+                    $this->entityManager->flush();
 
                     $this->addFlash(
                         'message',
@@ -91,15 +95,15 @@ class IconController extends AbstractController
     }
 
     #[Route('/admin/icon/{id}', methods: ['GET', 'POST'], name: 'app_admin.icon.update')]
-    public function update(ValidatorInterface $validator, EntityManagerInterface $entityManager, int $id, Request $request): Response|JsonResponse
+    public function update(int $id, Request $request): Response|JsonResponse
     {
-        $icon = $entityManager->getRepository(Icon::class)->findOneBy(['id' => $id]);
+        $icon = $this->entityManager->getRepository(Icon::class)->findOneBy(['id' => $id]);
 
         if ('POST' == $_SERVER['REQUEST_METHOD']) {
             $data = json_decode($request->getContent(), true);
 
             $csrf = $data['csrf_token'];
-            $name = htmlspecialchars(trim($data['name']));
+            $name = strtolower(htmlspecialchars(trim($data['name'])));
             $svg = strip_tags(trim($data['svg']), '<svg><path><rect>');
             $isTechnology = $data['isTechnology'];
 
@@ -109,7 +113,7 @@ class IconController extends AbstractController
                     $icon->setSvg($svg);
                     $icon->setTechnology($isTechnology);
 
-                    $errors = $validator->validate($icon);
+                    $errors = $this->validator->validate($icon);
 
                     if (count($errors) > 0) {
                         $errorsList = [];
@@ -121,7 +125,7 @@ class IconController extends AbstractController
                         return $this->json(['success' => false, 'error' => $errorsList], 500);
                     }
 
-                    $entityManager->flush();
+                    $this->entityManager->flush();
 
                     $this->addFlash(
                         'message',
@@ -148,16 +152,16 @@ class IconController extends AbstractController
     }
 
     #[Route('/admin/icon/{id}', methods: ['DELETE'], name: 'app_admin.icon.delete')]
-    public function remove(int $id, EntityManagerInterface $entityManager, Request $request): JsonResponse
+    public function remove(int $id, Request $request): JsonResponse
     {
         $data = json_decode($request->getContent(), true);
         $csrf = $data['csrf_token'];
 
         if ($this->isCsrfTokenValid('icon_delete', $csrf)) {
             try {
-                $icon = $entityManager->getRepository(Icon::class)->findOneBy(['id' => $id]);
-                $entityManager->remove($icon);
-                $entityManager->flush();
+                $icon = $this->entityManager->getRepository(Icon::class)->findOneBy(['id' => $id]);
+                $this->entityManager->remove($icon);
+                $this->entityManager->flush();
 
                 $this->addFlash(
                     'message',
