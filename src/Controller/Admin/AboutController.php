@@ -4,19 +4,19 @@ namespace App\Controller\Admin;
 
 use App\Entity\About;
 use App\Repository\AboutRepository;
+use App\Utils\UnwantedTags;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
-use App\Util\UnwantedTags;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
-
 
 class AboutController extends AbstractController
 {
     private UnwantedTags $unwantedTags;
+
     public function __construct(private EntityManagerInterface $entityManager, private AboutRepository $repository, private ValidatorInterface $validator)
     {
         $this->unwantedTags = new UnwantedTags();
@@ -34,7 +34,7 @@ class AboutController extends AbstractController
     public function save(Request $request): JsonResponse
     {
         $data = json_decode($request->getContent(), true);
-        $content = $this->unwantedTags->strip_unwanted_tags($data['content'], ["iframe", "script"]);
+        $content = $this->unwantedTags->strip_unwanted_tags($data['content'], ['iframe', 'script']);
 
         $csrf = $data['csrf_token'];
 
@@ -54,7 +54,6 @@ class AboutController extends AbstractController
 
                     return $this->json(['success' => false, 'error' => $errorsList], 500);
                 }
-
 
                 $this->entityManager->flush();
 

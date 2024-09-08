@@ -18,14 +18,12 @@ class About
     #[ORM\Column(type: Types::TEXT, options: ['default' => ''])]
     #[Assert\Length(max: 1000, maxMessage: 'Le contenu ne doit pas faire plus de 1000 caractères')]
     #[Assert\NotBlank()]
-
     private ?string $content = null;
 
     public function getId(): ?int
     {
         return $this->id;
     }
-
 
     public function getContent(): ?string
     {
