@@ -37,14 +37,23 @@ export default function ProjectForm({
 
   useEffect(() => {
     const saveBtn = document.getElementById("saveBtn");
+    const editBtn = document.getElementById("editBtn");
 
     if (saveBtn) {
       saveBtn.addEventListener("click", handleSave);
     }
 
+    if (editBtn) {
+      editBtn.addEventListener("click", handleEditAndContinue);
+    }
+
     return () => {
       if (saveBtn) {
         saveBtn.removeEventListener("click", handleSave);
+      }
+
+      if (editBtn) {
+        editBtn.removeEventListener("click", handleEditAndContinue);
       }
     };
   }, [informations]);
@@ -98,7 +107,9 @@ export default function ProjectForm({
     });
   };
 
-  const handleSave = async (event) => {
+  const handleEditAndContinue = (event) => handleSave(event, true);
+
+  const handleSave = async (event, updating = false) => {
     event.preventDefault();
     const nameError = inputValidation.checkLength(informations.name.trim(), 60);
     const slugError = inputValidation.checkLength(informations.slug, 100);
@@ -122,6 +133,7 @@ export default function ProjectForm({
     }
 
     saveBtn.disabled = true;
+    editBtn.disabled = true;
     setDisableForm(true);
 
     await fetch(`/admin/project/${update ? project.id : "create"}`, {
@@ -139,37 +151,54 @@ export default function ProjectForm({
       .then((res) => res.json())
       .then((data) => {
         if (data.success) {
+          if (updating) {
+            window.location.reload();
+            return;
+          }
+
           document.location.href = "/admin/project/";
           return;
         }
 
         setDisableForm(false);
         saveBtn.disabled = false;
+        editBtn.disabled = false;
         return showNotification(data.error);
       })
       .catch((error) => {
         showNotification("erreur : " + error);
         setDisableForm(false);
         saveBtn.disabled = false;
+        editBtn.disabled = false;
       });
   };
 
   return (
     <div className="font-eudoxus flex flex-col gap-4">
-      <label
-        className="flex flex-col gap-2 justify-start w-fit"
-        htmlFor="visible">
-        visible
-        <Switch
-          name={"visible"}
-          id={"visible"}
-          label="visible"
-          className="mt-1"
-          onChange={onHandleIsVisible}
-          checked={informations.isVisible}
-          disabled={disableForm}
-        />
-      </label>
+      <div className="flex gap-2 max-sm:flex-col-reverse justify-between">
+        <label
+          className="flex flex-col gap-2 justify-start w-fit"
+          htmlFor="visible">
+          visible
+          <Switch
+            name={"visible"}
+            id={"visible"}
+            label="visible"
+            className="mt-1"
+            onChange={onHandleIsVisible}
+            checked={informations.isVisible}
+            disabled={disableForm}
+          />
+        </label>{" "}
+        <a
+          target="_blank"
+          ariaLabel="aperçu de la page"
+          href={"/projets/" + informations.slug}
+          className="mr-2 hover:text-white transition-colors duration-150 max-sm:text-right">
+          aperçu de la page
+        </a>
+      </div>
+
       <div className="flex gap-4 max-sm:flex-col">
         <InputField
           label="nom"

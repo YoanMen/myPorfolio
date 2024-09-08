@@ -35,12 +35,19 @@ export default function ProjectForm({
   });
   useEffect(() => {
     const saveBtn = document.getElementById("saveBtn");
+    const editBtn = document.getElementById("editBtn");
     if (saveBtn) {
       saveBtn.addEventListener("click", handleSave);
+    }
+    if (editBtn) {
+      editBtn.addEventListener("click", handleEditAndContinue);
     }
     return () => {
       if (saveBtn) {
         saveBtn.removeEventListener("click", handleSave);
+      }
+      if (editBtn) {
+        editBtn.removeEventListener("click", handleEditAndContinue);
       }
     };
   }, [informations]);
@@ -96,7 +103,8 @@ export default function ProjectForm({
       links: updatedLinks
     });
   };
-  const handleSave = async event => {
+  const handleEditAndContinue = event => handleSave(event, true);
+  const handleSave = async (event, updating = false) => {
     event.preventDefault();
     const nameError = inputValidation.checkLength(informations.name.trim(), 60);
     const slugError = inputValidation.checkLength(informations.slug, 100);
@@ -113,6 +121,7 @@ export default function ProjectForm({
       return;
     }
     saveBtn.disabled = true;
+    editBtn.disabled = true;
     setDisableForm(true);
     await fetch(`/admin/project/${update ? project.id : "create"}`, {
       method: "POST",
@@ -127,20 +136,28 @@ export default function ProjectForm({
       })
     }).then(res => res.json()).then(data => {
       if (data.success) {
+        if (updating) {
+          window.location.reload();
+          return;
+        }
         document.location.href = "/admin/project/";
         return;
       }
       setDisableForm(false);
       saveBtn.disabled = false;
+      editBtn.disabled = false;
       return showNotification(data.error);
     }).catch(error => {
       showNotification("erreur : " + error);
       setDisableForm(false);
       saveBtn.disabled = false;
+      editBtn.disabled = false;
     });
   };
   return /*#__PURE__*/React.createElement("div", {
     className: "font-eudoxus flex flex-col gap-4"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "flex gap-2 max-sm:flex-col-reverse justify-between"
   }, /*#__PURE__*/React.createElement("label", {
     className: "flex flex-col gap-2 justify-start w-fit",
     htmlFor: "visible"
@@ -152,7 +169,12 @@ export default function ProjectForm({
     onChange: onHandleIsVisible,
     checked: informations.isVisible,
     disabled: disableForm
-  })), /*#__PURE__*/React.createElement("div", {
+  })), " ", /*#__PURE__*/React.createElement("a", {
+    target: "_blank",
+    ariaLabel: "aper\xE7u de la page",
+    href: "/projets/" + informations.slug,
+    className: "mr-2 hover:text-white transition-colors duration-150 max-sm:text-right"
+  }, "aper\xE7u de la page")), /*#__PURE__*/React.createElement("div", {
     className: "flex gap-4 max-sm:flex-col"
   }, /*#__PURE__*/React.createElement(InputField, {
     label: "nom",

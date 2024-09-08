@@ -8,3 +8,35 @@
   font-weight: 100 900;
   font-display: swap;
 }
+
+@layer components {
+  h2 {
+    @apply text-xl font-semibold;
+  }
+
+  h3 {
+    @apply text-lg font-semibold;
+  }
+
+  ol {
+    @apply list-decimal list-inside;
+  }
+
+  ul {
+    @apply list-disc list-inside;
+  }
+
+  pre {
+    @apply bg-secondary  p-4 text-sm font-light;
+  }
+}
+
+blockquote::before {
+  content: "“";
+  font-size: 1.2rem;
+}
+
+blockquote::after {
+  content: "”";
+  font-size: 1.2rem;
+}
