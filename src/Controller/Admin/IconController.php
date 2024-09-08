@@ -14,9 +14,7 @@ use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 class IconController extends AbstractController
 {
-    public function __construct(private ValidatorInterface $validator, private EntityManagerInterface $entityManager, private IconRepository $iconRepository)
-    {
-    }
+    public function __construct(private ValidatorInterface $validator, private EntityManagerInterface $entityManager, private IconRepository $iconRepository) {}
 
     #[Route('/admin/icon', name: 'app_admin.icon')]
     public function index(Request $request): Response
@@ -51,7 +49,7 @@ class IconController extends AbstractController
             $data = json_decode($request->getContent(), true);
 
             $csrf = $data['csrf_token'];
-            $name = htmlspecialchars(trim($data['name']));
+            $name = strtolower(htmlspecialchars(trim($data['name'])));
             $svg = strip_tags(trim($data['svg']), '<svg><path><rect>');
             $isTechnology = $data['isTechnology'];
 
@@ -79,7 +77,7 @@ class IconController extends AbstractController
 
                     $this->addFlash(
                         'message',
-                        $icon->getName().' a été créée'
+                        $icon->getName() . ' a été créée'
                     );
 
                     return $this->json(['success' => true]);
@@ -103,7 +101,7 @@ class IconController extends AbstractController
             $data = json_decode($request->getContent(), true);
 
             $csrf = $data['csrf_token'];
-            $name = htmlspecialchars(trim($data['name']));
+            $name = strtolower(htmlspecialchars(trim($data['name'])));
             $svg = strip_tags(trim($data['svg']), '<svg><path><rect>');
             $isTechnology = $data['isTechnology'];
 
@@ -129,7 +127,7 @@ class IconController extends AbstractController
 
                     $this->addFlash(
                         'message',
-                        $icon->getName().' a été modifiée'.$errors
+                        $icon->getName() . ' a été modifiée' . $errors
                     );
 
                     return $this->json(['success' => true]);
@@ -165,7 +163,7 @@ class IconController extends AbstractController
 
                 $this->addFlash(
                     'message',
-                    $icon->getName().' a été supprimée'
+                    $icon->getName() . ' a été supprimée'
                 );
 
                 return $this->json(['success' => true]);
