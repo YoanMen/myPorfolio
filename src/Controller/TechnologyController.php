@@ -14,6 +14,6 @@ class TechnologyController extends AbstractController
     {
         $technologies = $iconRepository->findBy(['isTechnology' => true]);
 
-        return $this->json($technologies);
+        return $this->json($technologies, 200, [], ['groups' => 'icon.read']);
     }
 }

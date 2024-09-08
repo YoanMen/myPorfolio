@@ -18,13 +18,13 @@ class Icon
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
-    #[Groups('icon.link')]
+    #[Groups('icon.read')]
     private ?int $id = null;
 
     #[ORM\Column(length: 60)]
     #[Assert\NotBlank()]
     #[Assert\Length(max: 60, maxMessage: 'Le nom ne doit pas faire plus de 60 caractères')]
-    #[Groups('icon.link')]
+    #[Groups('icon.read')]
     private ?string $name = null;
 
     #[ORM\Column]
@@ -33,7 +33,7 @@ class Icon
     #[ORM\Column(type: Types::TEXT)]
     #[Assert\NotBlank()]
     #[Assert\Length(max: 3000, maxMessage: 'Le code du SVG ne doit pas dépasser 1500 caractères')]
-    #[Groups('icon.link')]
+    #[Groups('icon.read')]
     private ?string $svg = null;
 
     /**

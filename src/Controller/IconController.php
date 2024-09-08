@@ -14,6 +14,6 @@ class IconController extends AbstractController
     {
         $icons = $iconRepository->findBy(['isTechnology' => false]);
 
-        return $this->json($icons, 200, [], ['groups' => 'icon.link']);
+        return $this->json($icons, 200, [], ['groups' => 'icon.read']);
     }
 }
