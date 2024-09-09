@@ -1,10 +1,6 @@
 name: CI/CD
 
 on:
-  push:
-    branches:
-      - "*"
-
   pull_request:
     branches: [main, dev]
 
@@ -111,6 +107,7 @@ jobs:
   deploy:
     name: 🎉 Deploy
     runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main'
     needs: [backend-tests, frontend-test]
     steps:
       - name: 🚚 Get latest code
