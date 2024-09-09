@@ -133,7 +133,7 @@ export default function ProjectForm({
     }
 
     saveBtn.disabled = true;
-    editBtn.disabled = true;
+    if(editBtn) editBtn.disabled = true;
     setDisableForm(true);
 
     await fetch(`/admin/project/${update ? project.id : "create"}`, {
@@ -162,14 +162,14 @@ export default function ProjectForm({
 
         setDisableForm(false);
         saveBtn.disabled = false;
-        editBtn.disabled = false;
+        if(editBtn) editBtn.disabled = false;
         return showNotification(data.error);
       })
       .catch((error) => {
         showNotification("erreur : " + error);
         setDisableForm(false);
         saveBtn.disabled = false;
-        editBtn.disabled = false;
+        if(editBtn) editBtn.disabled = false;
       });
   };
 
