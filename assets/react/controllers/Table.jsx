@@ -15,12 +15,8 @@ export default function Table({ csrf_token, data, value, url }) {
     [openActions];
 
   const clickOutside = (event) => {
-    if (openActions != null) {
-      console.log(event.target.closest("button"));
-      if (!event.target.closest("button")) {
-        setOpenActions(null);
-      }
-      console.log("close action");
+    if (openActions != null && !event.target.closest("button")) {
+      setOpenActions(null);
     }
   };
 
