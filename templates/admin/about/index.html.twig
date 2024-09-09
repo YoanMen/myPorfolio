@@ -1,0 +1,15 @@
+{% extends 'admin/base.html.twig' %}
+
+{% block title %}Yoan Ménard - gestion du a propos
+{% endblock %}
+
+{% block pageTitle %}
+	Gestion du a propos
+{% endblock %}
+{% block actionsBtn %}
+	<twig:Button:PrimaryButton id="saveBtn" label="sauvegarder"/>
+{% endblock %}
+
+{% block main %}
+	<div {{ react_component("About/AboutForm", {about: about.content, csrf_token : csrf_token('about') } ) }}></div>
+{% endblock %}

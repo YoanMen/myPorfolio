@@ -1,0 +1,15 @@
+{% extends 'admin/base.html.twig' %}
+
+{% block title %}Yoan Ménard - création d'une icône
+{% endblock %}
+
+{% block pageTitle %}
+	Création d'une icône
+{% endblock %}
+{% block actionsBtn %}
+	<twig:Button:PrimaryButton id="saveBtn" label="créer l'icône"/>
+{% endblock %}
+
+{% block main %}
+	<div {{ react_component("Icon/IconForm", { csrf_token : csrf_token('create_icon')} ) }}></div>
+{% endblock %}

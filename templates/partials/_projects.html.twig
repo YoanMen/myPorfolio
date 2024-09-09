@@ -1,0 +1,20 @@
+<section aria-label="section projets" id="projets" class="max-w-screen-sm mx-auto sm:rounded-md bg-secondary border-stroke sm:border-[1px] font-eudoxus p-4 mb-32 max-lg:mb-20">
+
+	{% if is_granted("ROLE_USER") %}
+		<div class="flex justify-between items-center">
+			<h2 class="text-2xl mb-4 font-bold text-white">Mes projets</h2>
+			<a id="modification" aria-label="boutton de modification" class="hover:text-white transition-colors duration-150" href="{{ url("app_admin.project") }}" data-turbo="false">modifier</a>
+		</div>
+	{% else %}
+		<h2 class="text-2xl mb-4 font-bold text-white">Mes projets</h2>
+	{% endif %}
+
+	<p class="leading-8">Découvrez ici mes réalisations personnelles et professionnelles dans le développement web et mobile.</p>
+	<ol>
+		{% for project in projects %}
+			<li class="list-none">
+				<twig:ProjectCard project="{{ project }}"/>
+			</li>
+		{% endfor %}
+	</ol>
+</section>

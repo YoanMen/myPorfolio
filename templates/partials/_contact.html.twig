@@ -1,0 +1,5 @@
+<section aria-label="section contact" id="contact" class="max-w-screen-sm mx-auto sm:rounded-md bg-secondary border-stroke sm:border-[1px] p-4 mb-32 max-lg:mb-20 font-eudoxus">
+	<h2 class="text-2xl mb-4 font-bold text-white">Contact</h2>
+	<p class="leading-8">Je serais ravi de discuter de vos besoins et de vos projets. Que vous ayez des questions, des commentaires, ou que vous souhaitiez simplement échanger, n'hésitez pas à me contacter.</p>
+	<div {{ react_component("FormContact", {csrf_token : csrf_token('contact')} ) }}></div>
+</section>

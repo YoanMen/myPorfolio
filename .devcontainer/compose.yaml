@@ -1,0 +1,57 @@
+services:
+  dev:
+    build:
+      context: ..
+      dockerfile: DockerFile
+
+    command: sleep infinity
+    volumes:
+      - ../.:/workspace
+    ports:
+      - 8000:8000
+    environment:
+      MAILER_DSN: "smtp://mailer:1025"
+      DATABASE_URL: "mysql://root:${MYSQL_ROOT_PASS}@db_server:3306/${MYSQL_DB}?serverVersion=11.2.4-MariaDB&charset=utf8mb4"
+    networks:
+      - symfony_app
+
+  db_server:
+    image: mariadb:11.2
+    container_name: "${APP_NAME}-db"
+    restart: always
+    ports:
+      - "33016:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: "${MYSQL_ROOT_PASS}"
+
+    volumes:
+      - db_data:/var/lib/mysql
+
+    networks:
+      - symfony_app
+
+  phpmyadmin:
+    image: phpmyadmin
+    restart: always
+    ports:
+      - 8101:80
+    environment:
+      PMA_HOST: db_server
+    networks:
+      - symfony_app
+
+  mailer:
+    image: axllent/mailpit
+    ports:
+      - "1025"
+      - 8026:8025
+
+    environment:
+      MP_SMTP_AUTH_ACCEPT_ANY: 1
+      MP_SMTP_AUTH_ALLOW_INSECURE: 1
+
+networks:
+  symfony_app:
+
+volumes:
+  db_data:

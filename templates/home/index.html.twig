@@ -1,0 +1,12 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Yoan Ménard - Portfolio
+{% endblock %}
+
+{% block body %}
+	<main class="max-w-screen-sm mx-auto min-h-screen">
+		{% include "./partials/_hero.html.twig" %}
+		{% include "./partials/_about.html.twig" %}
+		{% include "./partials/_projects.html.twig" %}
+		{% include "./partials/_contact.html.twig" %}
+	{% endblock %}

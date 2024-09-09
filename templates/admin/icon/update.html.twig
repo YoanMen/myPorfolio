@@ -1,0 +1,16 @@
+{% extends 'admin/base.html.twig' %}
+
+{% block title %}Yoan Ménard - icônes
+{% endblock %}
+
+{% block pageTitle %}
+	Modification de l'icône
+	{{ icon.name }}
+{% endblock %}
+{% block actionsBtn %}
+	<twig:Button:PrimaryButton id="saveBtn" label="modifier l'icône"/>
+{% endblock %}
+
+{% block main %}
+	<div {{ react_component("Icon/IconForm", { update: true, csrf_token : csrf_token('update_icon'), icon : icon} ) }}></div>
+{% endblock %}
