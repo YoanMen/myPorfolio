@@ -34,10 +34,10 @@ export default function ProjectForm({
     links: project.links,
     technologies: project.technologies,
   });
-
+  let editBtn = null;
   useEffect(() => {
     const saveBtn = document.getElementById("saveBtn");
-    const editBtn = document.getElementById("editBtn");
+    editBtn = document.getElementById("editBtn");
 
     if (saveBtn) {
       saveBtn.addEventListener("click", handleSave);
@@ -133,7 +133,7 @@ export default function ProjectForm({
     }
 
     saveBtn.disabled = true;
-    if(editBtn) editBtn.disabled = true;
+    if (editBtn) editBtn.disabled = true;
     setDisableForm(true);
 
     await fetch(`/admin/project/${update ? project.id : "create"}`, {
@@ -162,14 +162,14 @@ export default function ProjectForm({
 
         setDisableForm(false);
         saveBtn.disabled = false;
-        if(editBtn) editBtn.disabled = false;
+        if (editBtn) editBtn.disabled = false;
         return showNotification(data.error);
       })
       .catch((error) => {
         showNotification("erreur : " + error);
         setDisableForm(false);
         saveBtn.disabled = false;
-        if(editBtn) editBtn.disabled = false;
+        if (editBtn) editBtn.disabled = false;
       });
   };
 

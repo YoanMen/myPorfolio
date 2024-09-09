@@ -33,9 +33,10 @@ export default function ProjectForm({
     links: project.links,
     technologies: project.technologies
   });
+  let editBtn = null;
   useEffect(() => {
     const saveBtn = document.getElementById("saveBtn");
-    const editBtn = document.getElementById("editBtn");
+    editBtn = document.getElementById("editBtn");
     if (saveBtn) {
       saveBtn.addEventListener("click", handleSave);
     }
