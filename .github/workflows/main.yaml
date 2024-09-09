@@ -1,8 +1,11 @@
 name: CI/CD
 
 on:
+  push:
+    branches: [main]
+
   pull_request:
-    branches: [main, dev]
+    branches: [dev]
 
 jobs:
   backend-tests:
