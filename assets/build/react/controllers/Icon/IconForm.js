@@ -71,7 +71,6 @@ export default function IconForm({
     });
   };
   const onHandleName = value => {
-    value = value.trim();
     setErrors({
       ...errors,
       name: inputValidation.checkLength(value, 60)

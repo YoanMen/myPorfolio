@@ -101,7 +101,6 @@ jobs:
 
       - name: install dependencies
         run: |
-          php bin/console importmap:install
           npm install
 
       - name: run test
