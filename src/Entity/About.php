@@ -15,7 +15,7 @@ class About
     #[ORM\Column]
     private ?int $id = null;
 
-    #[ORM\Column(type: Types::TEXT, options: ['default' => ''])]
+    #[ORM\Column(type: Types::TEXT)]
     #[Assert\Length(max: 1000, maxMessage: 'Le contenu ne doit pas faire plus de 1000 caractères')]
     #[Assert\NotBlank()]
     private ?string $content = null;
