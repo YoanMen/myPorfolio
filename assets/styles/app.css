@@ -27,7 +27,11 @@
   }
 
   pre {
-    @apply bg-secondary  p-4 text-sm font-light;
+    @apply bg-secondary  p-4 text-sm font-light overflow-x-scroll;
+  }
+
+  svg {
+    @apply stroke-text fill-primary;
   }
 }
 
