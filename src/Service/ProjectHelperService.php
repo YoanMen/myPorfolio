@@ -11,7 +11,9 @@ use Doctrine\ORM\EntityManagerInterface;
 
 class ProjectHelperService
 {
-    public function __construct(private IconRepository $iconRepository, private UnwantedTags $unwantedTags) {}
+    public function __construct(private IconRepository $iconRepository, private UnwantedTags $unwantedTags)
+    {
+    }
 
     /**
      * setLinksAndTechnology.
@@ -22,8 +24,8 @@ class ProjectHelperService
     public function setLinksAndTechnology(Project $project, array $links, array $technologies, EntityManagerInterface $entityManager): void
     {
         $this->removeLinksFromProject($project, $links);
-        $this->removeTechnologiesFromProject($project, $technologies);
-        $this->addLinksToProject($project, $links, $entityManager);
+        $this->removeTechnologiesFromProject($project);
+        $this->addLinksToProject($project, $links, entityManager: $entityManager);
         $this->addTechnologiesToProject($project, $technologies);
     }
 
@@ -74,10 +76,8 @@ class ProjectHelperService
 
     /**
      * removeTechnologiesFromProject.
-     *
-     * @param array<mixed> $technologies
      */
-    private function removeTechnologiesFromProject(Project $project, array $technologies): void
+    private function removeTechnologiesFromProject(Project $project): void
     {
         foreach ($project->getTechnologies() as $oldTechnology) {
             $project->removeTechnology(technology: $oldTechnology);

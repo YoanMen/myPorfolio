@@ -126,15 +126,17 @@ export default function IconForm({
           className="flex flex-col gap-2 justify-start"
           htmlFor="technologie">
           technologie
-          <Switch
-            name={"technologie"}
-            id={"technologie"}
-            label="technologie"
-            className="mt-1"
-            onChange={onHandleIsTechnology}
-            checked={informations.isTechnology}
-            disabled={disableForm}
-          />
+          {!update && (
+            <Switch
+              name={"technologie"}
+              id={"technologie"}
+              label="technologie"
+              className="mt-1"
+              onChange={onHandleIsTechnology}
+              checked={informations.isTechnology}
+              disabled={disableForm}
+            />
+          )}
         </label>
       </div>
       <TextAreaField

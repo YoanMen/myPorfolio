@@ -132,7 +132,7 @@ export default function IconForm({
   }), /*#__PURE__*/React.createElement("label", {
     className: "flex flex-col gap-2 justify-start",
     htmlFor: "technologie"
-  }, "technologie", /*#__PURE__*/React.createElement(Switch, {
+  }, "technologie", !update && /*#__PURE__*/React.createElement(Switch, {
     name: "technologie",
     id: "technologie",
     label: "technologie",
