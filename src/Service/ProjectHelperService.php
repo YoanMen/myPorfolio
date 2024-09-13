@@ -11,9 +11,7 @@ use Doctrine\ORM\EntityManagerInterface;
 
 class ProjectHelperService
 {
-    public function __construct(private IconRepository $iconRepository, private UnwantedTags $unwantedTags)
-    {
-    }
+    public function __construct(private IconRepository $iconRepository, private UnwantedTags $unwantedTags) {}
 
     /**
      * setLinksAndTechnology.
@@ -46,7 +44,6 @@ class ProjectHelperService
             $link->setProject($project);
 
             $project->addLink($link);
-            $entityManager->persist($link);
         }
     }
 

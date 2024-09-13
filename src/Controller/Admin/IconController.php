@@ -4,7 +4,7 @@ namespace App\Controller\Admin;
 
 use App\Entity\Icon;
 use App\Repository\IconRepository;
-use App\Service\ValidateEntity;
+use App\Service\ValidateEntityService;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -14,8 +14,11 @@ use Symfony\Component\Routing\Attribute\Route;
 
 class IconController extends AbstractController
 {
-    public function __construct(private ValidateEntity $validateEntity, private EntityManagerInterface $entityManager, private IconRepository $iconRepository)
-    {
+    public function __construct(
+        private ValidateEntityService $validateEntity,
+        private EntityManagerInterface $entityManager,
+        private IconRepository $iconRepository,
+    ) {
     }
 
     #[Route('/admin/icon', name: 'app_admin.icon')]

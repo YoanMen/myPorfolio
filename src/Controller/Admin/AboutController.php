@@ -4,7 +4,7 @@ namespace App\Controller\Admin;
 
 use App\Entity\About;
 use App\Repository\AboutRepository;
-use App\Service\ValidateEntity;
+use App\Service\ValidateEntityService;
 use App\Utils\UnwantedTags;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -15,8 +15,12 @@ use Symfony\Component\Routing\Attribute\Route;
 
 class AboutController extends AbstractController
 {
-    public function __construct(private UnwantedTags $unwantedTags, private ValidateEntity $validateEntity, private EntityManagerInterface $entityManager, private AboutRepository $repository)
-    {
+    public function __construct(
+        private UnwantedTags $unwantedTags,
+        private ValidateEntityService $validateEntity,
+        private EntityManagerInterface $entityManager,
+        private AboutRepository $repository,
+    ) {
     }
 
     #[Route('/admin/about', methods: ['GET'], name: 'app_admin.about')]

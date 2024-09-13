@@ -5,7 +5,7 @@ namespace App\Controller\Admin;
 use App\Entity\Project;
 use App\Repository\ProjectRepository;
 use App\Service\ProjectHelperService;
-use App\Service\ValidateEntity;
+use App\Service\ValidateEntityService;
 use App\Utils\UnwantedTags;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -18,11 +18,10 @@ class ProjectController extends AbstractController
 {
     public function __construct(
         private EntityManagerInterface $entityManager,
-        private ValidateEntity $validateEntity,
-        private ProjectHelperService $projectHelperService,
-        private UnwantedTags $unwantedTags
-    ) {
-    }
+        private ValidateEntityService $validateEntity,
+        private ProjectHelperService $projectHelper,
+        private UnwantedTags $unwantedTags,
+    ) {}
 
     #[Route('/admin/project', name: 'app_admin.project')]
     public function index(Request $request, ProjectRepository $projectRepository): Response
@@ -68,12 +67,12 @@ class ProjectController extends AbstractController
             if ($this->isCsrfTokenValid('create_project', $csrf)) {
                 try {
                     $project = new Project();
-                    $project->setName($name);
-                    $project->setSlug($slug);
-                    $project->setContent($content);
-                    $project->setVisible($isVisible);
+                    $project->setName($name)
+                        ->setSlug($slug)
+                        ->setContent($content)
+                        ->setVisible($isVisible);
 
-                    $this->projectHelperService->setLinksAndTechnology($project, $links, $technologies, $this->entityManager);
+                    $this->projectHelper->setLinksAndTechnology($project, $links, $technologies, $this->entityManager);
                     $errors = $this->validateEntity->validate($project);
 
                     if ($errors) {
@@ -85,7 +84,7 @@ class ProjectController extends AbstractController
 
                     $this->addFlash(
                         'message',
-                        'Le projet '.$project->getName().' a été créée'
+                        'Le projet ' . $project->getName() . ' a été créée'
                     );
 
                     return $this->json(['success' => true]);
@@ -120,12 +119,12 @@ class ProjectController extends AbstractController
 
             if ($this->isCsrfTokenValid('update_project', $csrf)) {
                 try {
-                    $project->setName($name);
-                    $project->setSlug($slug);
-                    $project->setContent($content);
-                    $project->setVisible($isVisible);
+                    $project->setName($name)
+                        ->setSlug($slug)
+                        ->setContent($content)
+                        ->setVisible($isVisible);
 
-                    $this->projectHelperService->setLinksAndTechnology($project, $links, $technologies, $this->entityManager);
+                    $this->projectHelper->setLinksAndTechnology($project, $links, $technologies, $this->entityManager);
 
                     $errors = $this->validateEntity->validate($project);
 
@@ -138,12 +137,12 @@ class ProjectController extends AbstractController
 
                     $this->addFlash(
                         'message',
-                        'Le projet '.$project->getName().' a été modifiée'
+                        'Le projet ' . $project->getName() . ' a été modifiée'
                     );
 
                     return $this->json(['success' => true]);
                 } catch (\Throwable $th) {
-                    return $this->json(['success' => false, 'error' => 'impossible de sauvegarder les données, une erreur interne est survenue '.$th->getMessage()], 500);
+                    return $this->json(['success' => false, 'error' => 'impossible de sauvegarder les données, une erreur interne est survenue ' . $th->getMessage()], 500);
                 }
             }
 
@@ -157,8 +156,8 @@ class ProjectController extends AbstractController
                 'slug' => $project->getSlug(),
                 'content' => $project->getContent(),
                 'isVisible' => $project->isVisible(),
-                'technologies' => $this->projectHelperService->setTechnologiesAndLinks($project)['technologies'],
-                'links' => $this->projectHelperService->setTechnologiesAndLinks($project)['links'],
+                'technologies' => $this->projectHelper->setTechnologiesAndLinks($project)['technologies'],
+                'links' => $this->projectHelper->setTechnologiesAndLinks($project)['links'],
             ],
         ]);
     }
@@ -177,7 +176,7 @@ class ProjectController extends AbstractController
 
                 $this->addFlash(
                     'message',
-                    'Le projet '.$project->getName().' a été supprimée'
+                    'Le projet ' . $project->getName() . ' a été supprimée'
                 );
 
                 return $this->json(['success' => true]);

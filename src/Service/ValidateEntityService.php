@@ -4,7 +4,7 @@ namespace App\Service;
 
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
-class ValidateEntity
+class ValidateEntityService
 {
     public function __construct(private ValidatorInterface $validator)
     {
