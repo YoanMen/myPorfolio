@@ -33,14 +33,20 @@
   svg {
     @apply stroke-text fill-primary;
   }
+
+  blockquote {
+    @apply border-stroke border-l-4 m-2 p-2 text-sm;
+  }
 }
 
-blockquote::before {
-  content: "“";
-  font-size: 1.2rem;
+.ql-align-center {
+  text-align: center;
 }
 
-blockquote::after {
-  content: "”";
-  font-size: 1.2rem;
+.ql-align-right {
+  text-align: right;
+}
+
+.ql-align-justify {
+  text-align: justify;
 }

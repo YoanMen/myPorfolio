@@ -14,6 +14,7 @@ const modules = {
     ],
     ["link", "image"],
     ["clean"],
+    [{ align: [] }],
   ],
 };
 
@@ -30,6 +31,7 @@ const formats = [
   "link",
   "image",
   "code-block",
+  "align"
 ];
 
 export default function QuillEditor({ onChange, value, disabled }) {

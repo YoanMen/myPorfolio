@@ -12,9 +12,11 @@ const modules = {
     indent: "-1"
   }, {
     indent: "+1"
-  }], ["link", "image"], ["clean"]]
+  }], ["link", "image"], ["clean"], [{
+    align: []
+  }]]
 };
-const formats = ["header", "bold", "italic", "underline", "strike", "blockquote", "list", "bullet", "indent", "link", "image", "code-block"];
+const formats = ["header", "bold", "italic", "underline", "strike", "blockquote", "list", "bullet", "indent", "link", "image", "code-block", "align"];
 export default function QuillEditor({
   onChange,
   value,
