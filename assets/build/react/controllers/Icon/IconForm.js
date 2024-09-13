@@ -129,10 +129,10 @@ export default function IconForm({
     onChange: onHandleName,
     value: informations.name,
     disabled: disableForm
-  }), /*#__PURE__*/React.createElement("label", {
+  }), !update && /*#__PURE__*/React.createElement("label", {
     className: "flex flex-col gap-2 justify-start",
     htmlFor: "technologie"
-  }, "technologie", !update && /*#__PURE__*/React.createElement(Switch, {
+  }, "technologie", /*#__PURE__*/React.createElement(Switch, {
     name: "technologie",
     id: "technologie",
     label: "technologie",

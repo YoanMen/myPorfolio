@@ -122,11 +122,11 @@ export default function IconForm({
           value={informations.name}
           disabled={disableForm}
         />
-        <label
-          className="flex flex-col gap-2 justify-start"
-          htmlFor="technologie">
-          technologie
-          {!update && (
+        {!update && (
+          <label
+            className="flex flex-col gap-2 justify-start"
+            htmlFor="technologie">
+            technologie
             <Switch
               name={"technologie"}
               id={"technologie"}
@@ -136,8 +136,8 @@ export default function IconForm({
               checked={informations.isTechnology}
               disabled={disableForm}
             />
-          )}
-        </label>
+          </label>
+        )}
       </div>
       <TextAreaField
         label="SVG"
