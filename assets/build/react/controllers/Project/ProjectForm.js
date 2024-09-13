@@ -25,6 +25,7 @@ export default function ProjectForm({
     technologies: null
   });
   const [disableForm, setDisableForm] = useState(false);
+  const [isSaved, setIsSaved] = useState(true);
   const [informations, setInformations] = useState({
     name: project.name,
     slug: project.slug,
@@ -34,6 +35,19 @@ export default function ProjectForm({
     technologies: project.technologies
   });
   let editBtn = null;
+  useEffect(() => {
+    const beforeUnloadHandler = event => {
+      if (isSaved) {
+        return;
+      }
+      event.preventDefault();
+      event.returnValue = true;
+    };
+    window.addEventListener("beforeunload", beforeUnloadHandler);
+    return () => {
+      window.removeEventListener("beforeunload", beforeUnloadHandler);
+    };
+  }, [isSaved]);
   useEffect(() => {
     const saveBtn = document.getElementById("saveBtn");
     editBtn = document.getElementById("editBtn");
@@ -64,6 +78,7 @@ export default function ProjectForm({
       name: value,
       slug: inputValidation.string_to_slug(value)
     });
+    setIsSaved(false);
   };
   const onHandleSlug = value => {
     value = inputValidation.string_to_slug(value);
@@ -75,18 +90,21 @@ export default function ProjectForm({
       ...informations,
       slug: value
     });
+    setIsSaved(false);
   };
   const onHandleIsVisible = value => {
     setInformations({
       ...informations,
       isVisible: value
     });
+    setIsSaved(false);
   };
   const onHandleContent = value => {
     setInformations({
       ...informations,
       content: value
     });
+    setIsSaved(false);
   };
   const onHandleTechnologies = updatedTechnologies => {
     setErrors({
@@ -121,6 +139,7 @@ export default function ProjectForm({
     if (nameError || slugError || contentError || technologiesError) {
       return;
     }
+    setIsSaved(true);
     saveBtn.disabled = true;
     if (editBtn) editBtn.disabled = true;
     setDisableForm(true);

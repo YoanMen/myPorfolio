@@ -7,10 +7,12 @@ export default function AboutForm({ about, csrf_token }) {
   const [value, setValue] = useState("");
   const [error, setError] = useState(null);
   const [disableForm, setDisableForm] = useState(false);
+  const [isSaved, setIsSaved] = useState(true);
 
   const onChange = (value) => {
     setError(inputValidation.about(value.trim()));
     setValue(value);
+    setIsSaved(false);
   };
 
   const handleSave = async (event) => {
@@ -37,6 +39,7 @@ export default function AboutForm({ about, csrf_token }) {
       .then((res) => res.json())
       .then((result) => {
         if (result.success) {
+          setIsSaved(true);
           return showNotification("Le contenu du a propos a été modifié");
         }
 
@@ -50,6 +53,21 @@ export default function AboutForm({ about, csrf_token }) {
         saveBtn.disabled = false;
       });
   };
+
+  useEffect(() => {
+    const beforeUnloadHandler = (event) => {
+      if (isSaved) {
+        return;
+      }
+      event.preventDefault();
+      event.returnValue = true;
+    };
+    window.addEventListener("beforeunload", beforeUnloadHandler);
+
+    return () => {
+      window.removeEventListener("beforeunload", beforeUnloadHandler);
+    };
+  }, [isSaved]);
 
   useEffect(() => {
     setValue(about);

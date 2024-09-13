@@ -12,11 +12,27 @@ export default function IconForm({
 }) {
   const [errors, setErrors] = useState({ name: null, svg: null });
   const [disableForm, setDisableForm] = useState(false);
+  const [isSaved, setIsSaved] = useState(true);
   const [informations, setInformations] = useState({
     name: icon.name,
     svg: icon.svg,
     isTechnology: icon.isTechnology,
   });
+
+  useEffect(() => {
+    const beforeUnloadHandler = (event) => {
+      if (isSaved) {
+        return;
+      }
+      event.preventDefault();
+      event.returnValue = true;
+    };
+    window.addEventListener("beforeunload", beforeUnloadHandler);
+
+    return () => {
+      window.removeEventListener("beforeunload", beforeUnloadHandler);
+    };
+  }, [isSaved]);
 
   useEffect(() => {
     const saveBtn = document.getElementById("saveBtn");
@@ -75,19 +91,20 @@ export default function IconForm({
 
   const onHandleName = (value) => {
     setErrors({ ...errors, name: inputValidation.checkLength(value, 60) });
-
     setInformations({ ...informations, name: value });
+    setIsSaved(false);
   };
 
   const onHandleSVG = (value) => {
     value = value.trim();
     setErrors({ ...errors, svg: inputValidation.checkIsSVG(value) });
-
     setInformations({ ...informations, svg: value });
+    setIsSaved(false);
   };
 
   const onHandleIsTechnology = (value) => {
     setInformations({ ...informations, isTechnology: value });
+    setIsSaved(false);
   };
 
   return (

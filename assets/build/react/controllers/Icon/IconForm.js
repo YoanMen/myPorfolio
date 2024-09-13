@@ -18,11 +18,25 @@ export default function IconForm({
     svg: null
   });
   const [disableForm, setDisableForm] = useState(false);
+  const [isSaved, setIsSaved] = useState(true);
   const [informations, setInformations] = useState({
     name: icon.name,
     svg: icon.svg,
     isTechnology: icon.isTechnology
   });
+  useEffect(() => {
+    const beforeUnloadHandler = event => {
+      if (isSaved) {
+        return;
+      }
+      event.preventDefault();
+      event.returnValue = true;
+    };
+    window.addEventListener("beforeunload", beforeUnloadHandler);
+    return () => {
+      window.removeEventListener("beforeunload", beforeUnloadHandler);
+    };
+  }, [isSaved]);
   useEffect(() => {
     const saveBtn = document.getElementById("saveBtn");
     if (saveBtn) {
@@ -79,6 +93,7 @@ export default function IconForm({
       ...informations,
       name: value
     });
+    setIsSaved(false);
   };
   const onHandleSVG = value => {
     value = value.trim();
@@ -90,12 +105,14 @@ export default function IconForm({
       ...informations,
       svg: value
     });
+    setIsSaved(false);
   };
   const onHandleIsTechnology = value => {
     setInformations({
       ...informations,
       isTechnology: value
     });
+    setIsSaved(false);
   };
   return /*#__PURE__*/React.createElement("div", {
     className: "font-eudoxus flex flex-col gap-4"
