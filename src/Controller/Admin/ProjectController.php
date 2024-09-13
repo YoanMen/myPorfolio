@@ -6,6 +6,7 @@ use App\Entity\Link;
 use App\Entity\Project;
 use App\Repository\IconRepository;
 use App\Repository\ProjectRepository;
+use App\Service\ValidateEntity;
 use App\Utils\UnwantedTags;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -13,13 +14,12 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
-use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 class ProjectController extends AbstractController
 {
     private UnwantedTags $unwantedTags;
 
-    public function __construct(private EntityManagerInterface $entityManager, private IconRepository $iconRepository, private ValidatorInterface $validator)
+    public function __construct(private EntityManagerInterface $entityManager, private ValidateEntity $validateEntity, private IconRepository $iconRepository)
     {
         $this->unwantedTags = new UnwantedTags();
     }
@@ -76,16 +76,10 @@ class ProjectController extends AbstractController
                     $this->addLinksToProject($project, $links);
                     $this->addTechnologiesToProject($project, $technologies);
 
-                    $errors = $this->validator->validate($project);
+                    $errors = $this->validateEntity->validate($project);
 
-                    if (count($errors) > 0) {
-                        $errorsList = [];
-
-                        foreach ($errors as $error) {
-                            $errorsList[] = $error->getMessage();
-                        }
-
-                        return $this->json(['success' => false, 'error' => $errorsList], 500);
+                    if ($errors) {
+                        return $this->json(['success' => false, 'error' => $errors], 500);
                     }
 
                     $this->entityManager->persist($project);
@@ -138,16 +132,10 @@ class ProjectController extends AbstractController
                     $this->addLinksToProject($project, $links);
                     $this->addTechnologiesToProject($project, $technologies);
 
-                    $errors = $this->validator->validate($project);
+                    $errors = $this->validateEntity->validate($project);
 
-                    if (count($errors) > 0) {
-                        $errorsList = [];
-
-                        foreach ($errors as $error) {
-                            $errorsList[] = $error->getMessage();
-                        }
-
-                        return $this->json(['success' => false, 'error' => $errorsList], 500);
+                    if ($errors) {
+                        return $this->json(['success' => false, 'error' => $errors], 500);
                     }
 
                     $this->entityManager->persist($project);
@@ -155,7 +143,7 @@ class ProjectController extends AbstractController
 
                     $this->addFlash(
                         'message',
-                        'Le projet '.$project->getName().' a été modifiée'.$errors
+                        'Le projet '.$project->getName().' a été modifiée'
                     );
 
                     return $this->json(['success' => true]);

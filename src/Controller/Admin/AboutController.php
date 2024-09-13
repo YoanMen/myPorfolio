@@ -4,6 +4,7 @@ namespace App\Controller\Admin;
 
 use App\Entity\About;
 use App\Repository\AboutRepository;
+use App\Service\ValidateEntity;
 use App\Utils\UnwantedTags;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -11,15 +12,11 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
-use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 class AboutController extends AbstractController
 {
-    private UnwantedTags $unwantedTags;
-
-    public function __construct(private EntityManagerInterface $entityManager, private AboutRepository $repository, private ValidatorInterface $validator)
+    public function __construct(private UnwantedTags $unwantedTags, private ValidateEntity $validateEntity, private EntityManagerInterface $entityManager, private AboutRepository $repository)
     {
-        $this->unwantedTags = new UnwantedTags();
     }
 
     #[Route('/admin/about', methods: ['GET'], name: 'app_admin.about')]
@@ -43,16 +40,10 @@ class AboutController extends AbstractController
                 $about = $this->entityManager->getRepository(About::class)->find(['id' => 1]);
                 $about->setContent($content);
 
-                $errors = $this->validator->validate($about);
+                $errors = $this->validateEntity->validate($about);
 
-                if (count($errors) > 0) {
-                    $errorsList = [];
-
-                    foreach ($errors as $error) {
-                        $errorsList[] = $error->getMessage();
-                    }
-
-                    return $this->json(['success' => false, 'error' => $errorsList], 500);
+                if ($errors) {
+                    return $this->json(['success' => false, 'error' => $errors], 500);
                 }
 
                 $this->entityManager->flush();

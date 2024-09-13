@@ -4,17 +4,17 @@ namespace App\Controller\Admin;
 
 use App\Entity\Icon;
 use App\Repository\IconRepository;
+use App\Service\ValidateEntity;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
-use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 class IconController extends AbstractController
 {
-    public function __construct(private ValidatorInterface $validator, private EntityManagerInterface $entityManager, private IconRepository $iconRepository)
+    public function __construct(private ValidateEntity $validateEntity, private EntityManagerInterface $entityManager, private IconRepository $iconRepository)
     {
     }
 
@@ -62,16 +62,10 @@ class IconController extends AbstractController
                     $icon->setSvg($svg);
                     $icon->setTechnology($isTechnology);
 
-                    $errors = $this->validator->validate($icon);
+                    $errors = $this->validateEntity->validate($icon);
 
-                    if (count($errors) > 0) {
-                        $errorsList = [];
-
-                        foreach ($errors as $error) {
-                            $errorsList[] = $error->getMessage();
-                        }
-
-                        return $this->json(['success' => false, 'error' => $errorsList], 500);
+                    if ($errors) {
+                        return $this->json(['success' => false, 'error' => $errors], 500);
                     }
 
                     $this->entityManager->persist($icon);
@@ -113,16 +107,10 @@ class IconController extends AbstractController
                     $icon->setSvg($svg);
                     $icon->setTechnology($isTechnology);
 
-                    $errors = $this->validator->validate($icon);
+                    $errors = $this->validateEntity->validate($icon);
 
-                    if (count($errors) > 0) {
-                        $errorsList = [];
-
-                        foreach ($errors as $error) {
-                            $errorsList[] = $error->getMessage();
-                        }
-
-                        return $this->json(['success' => false, 'error' => $errorsList], 500);
+                    if ($errors) {
+                        return $this->json(['success' => false, 'error' => $errors], 500);
                     }
 
                     $this->entityManager->flush();
