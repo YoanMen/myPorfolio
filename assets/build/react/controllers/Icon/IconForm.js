@@ -60,6 +60,7 @@ export default function IconForm({
     if (nameError || svgError) {
       return;
     }
+    setIsSaved(true);
     saveBtn.disabled = true;
     setDisableForm(true);
     await fetch(`/admin/icon/${update ? icon.id : "create"}`, {
@@ -77,10 +78,12 @@ export default function IconForm({
       }
       setDisableForm(false);
       saveBtn.disabled = false;
+      setIsSaved(false);
       return showNotification(data.error);
     }).catch(error => {
       showNotification("erreur : " + error);
       setDisableForm(false);
+      setIsSaved(false);
       saveBtn.disabled = false;
     });
   };

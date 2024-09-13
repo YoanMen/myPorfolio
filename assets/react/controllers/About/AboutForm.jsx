@@ -25,6 +25,7 @@ export default function AboutForm({ about, csrf_token }) {
       return;
     }
 
+    setIsSaved(true);
     saveBtn.disabled = true;
     setDisableForm(true);
 
@@ -39,7 +40,6 @@ export default function AboutForm({ about, csrf_token }) {
       .then((res) => res.json())
       .then((result) => {
         if (result.success) {
-          setIsSaved(true);
           return showNotification("Le contenu du a propos a été modifié");
         }
 
@@ -47,6 +47,7 @@ export default function AboutForm({ about, csrf_token }) {
       })
       .catch((error) => {
         showNotification("erreur : " + error);
+        setIsSaved(false);
       })
       .finally(() => {
         setDisableForm(false);

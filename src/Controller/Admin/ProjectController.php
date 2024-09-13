@@ -2,10 +2,9 @@
 
 namespace App\Controller\Admin;
 
-use App\Entity\Link;
 use App\Entity\Project;
-use App\Repository\IconRepository;
 use App\Repository\ProjectRepository;
+use App\Service\ProjectHelperService;
 use App\Service\ValidateEntity;
 use App\Utils\UnwantedTags;
 use Doctrine\ORM\EntityManagerInterface;
@@ -17,11 +16,12 @@ use Symfony\Component\Routing\Attribute\Route;
 
 class ProjectController extends AbstractController
 {
-    private UnwantedTags $unwantedTags;
-
-    public function __construct(private EntityManagerInterface $entityManager, private ValidateEntity $validateEntity, private IconRepository $iconRepository)
-    {
-        $this->unwantedTags = new UnwantedTags();
+    public function __construct(
+        private EntityManagerInterface $entityManager,
+        private ValidateEntity $validateEntity,
+        private ProjectHelperService $projectHelperService,
+        private UnwantedTags $unwantedTags
+    ) {
     }
 
     #[Route('/admin/project', name: 'app_admin.project')]
@@ -73,9 +73,7 @@ class ProjectController extends AbstractController
                     $project->setContent($content);
                     $project->setVisible($isVisible);
 
-                    $this->addLinksToProject($project, $links);
-                    $this->addTechnologiesToProject($project, $technologies);
-
+                    $this->projectHelperService->setLinksAndTechnology($project, $links, $technologies, $this->entityManager);
                     $errors = $this->validateEntity->validate($project);
 
                     if ($errors) {
@@ -127,10 +125,7 @@ class ProjectController extends AbstractController
                     $project->setContent($content);
                     $project->setVisible($isVisible);
 
-                    $this->removeLinksFromProject($project, $links);
-                    $this->removeTechnologiesFromProject($project, $technologies);
-                    $this->addLinksToProject($project, $links);
-                    $this->addTechnologiesToProject($project, $technologies);
+                    $this->projectHelperService->setLinksAndTechnology($project, $links, $technologies, $this->entityManager);
 
                     $errors = $this->validateEntity->validate($project);
 
@@ -162,8 +157,8 @@ class ProjectController extends AbstractController
                 'slug' => $project->getSlug(),
                 'content' => $project->getContent(),
                 'isVisible' => $project->isVisible(),
-                'technologies' => $this->setTechnologiesAndLinks($project)['technologies'],
-                'links' => $this->setTechnologiesAndLinks($project)['links'],
+                'technologies' => $this->projectHelperService->setTechnologiesAndLinks($project)['technologies'],
+                'links' => $this->projectHelperService->setTechnologiesAndLinks($project)['links'],
             ],
         ]);
     }
@@ -192,109 +187,5 @@ class ProjectController extends AbstractController
         }
 
         return $this->json(['success' => false, 'error' => 'La clé CSRF n\'est pas valide'], 401);
-    }
-
-    /**
-     * addLinksToProject.
-     *
-     * @param array<mixed> $links
-     */
-    private function addLinksToProject(Project $project, array $links): void
-    {
-        foreach ($links as $element) {
-            $icon = $this->iconRepository->findOneBy(['id' => $element['id']]);
-            $url = $this->unwantedTags->strip_unwanted_tags($element['url'], ['iframe', 'script']);
-
-            $link = new Link();
-            $link->setUrl($url);
-            $link->setIcon($icon);
-            $link->setProject($project);
-
-            $project->addLink($link);
-            $this->entityManager->persist($link);
-        }
-    }
-
-    /**
-     * removeLinksFromProject.
-     *
-     * @param array<mixed> $links
-     */
-    private function removeLinksFromProject(Project $project, array $links): void
-    {
-        foreach ($project->getLinks() as $oldLink) {
-            $keep = false;
-
-            foreach ($links as $link) {
-                if ($oldLink->getId() == $link['id']) {
-                    $keep = true;
-                    break;
-                }
-            }
-            if (!$keep) {
-                $project->removeLink($oldLink);
-            }
-        }
-    }
-
-    /**
-     * addTechnologiesToProject.
-     *
-     * @param array<mixed> $technologies
-     */
-    private function addTechnologiesToProject(Project $project, array $technologies): void
-    {
-        foreach ($technologies as $technology) {
-            $icon = $this->iconRepository->findOneBy(['id' => $technology['id']]);
-            $project->addTechnology($icon);
-        }
-    }
-
-    /**
-     * removeTechnologiesFromProject.
-     *
-     * @param array<mixed> $technologies
-     */
-    private function removeTechnologiesFromProject(Project $project, array $technologies): void
-    {
-        foreach ($project->getTechnologies() as $oldTechnology) {
-            $project->removeTechnology($oldTechnology);
-            $keep = false;
-
-            foreach ($technologies as $technology) {
-                if ($oldTechnology->getId() == $technology['id']) {
-                    $keep = true;
-                    break;
-                }
-            }
-
-            if (!$keep) {
-                $project->removeTechnology($oldTechnology);
-            }
-        }
-    }
-
-    /**
-     * setTechnologiesAndLinks.
-     *
-     * @return array<mixed>
-     */
-    private function setTechnologiesAndLinks(Project $project): array
-    {
-        $technologies = [];
-        $links = [];
-
-        foreach ($project->getTechnologies() as $technology) {
-            $technologies[] = ['id' => $technology->getId()];
-        }
-
-        foreach ($project->getLinks() as $link) {
-            $links[] = [
-                'id' => $link->getIcon()->getId(),
-                'url' => $link->getUrl(),
-            ];
-        }
-
-        return ['technologies' => $technologies, 'links' => $links];
     }
 }

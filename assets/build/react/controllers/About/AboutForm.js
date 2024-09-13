@@ -22,6 +22,7 @@ export default function AboutForm({
     if (contentError) {
       return;
     }
+    setIsSaved(true);
     saveBtn.disabled = true;
     setDisableForm(true);
     await fetch("/admin/about", {
@@ -36,12 +37,12 @@ export default function AboutForm({
       }
     }).then(res => res.json()).then(result => {
       if (result.success) {
-        setIsSaved(true);
         return showNotification("Le contenu du a propos a été modifié");
       }
       return showNotification(result.error);
     }).catch(error => {
       showNotification("erreur : " + error);
+      setIsSaved(false);
     }).finally(() => {
       setDisableForm(false);
       saveBtn.disabled = false;

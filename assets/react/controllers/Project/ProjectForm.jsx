@@ -184,6 +184,7 @@ export default function ProjectForm({
         }
         setDisableForm(false);
         saveBtn.disabled = false;
+        setIsSaved(false);
         if (editBtn) editBtn.disabled = false;
         return showNotification(data.error);
       })
@@ -191,6 +192,7 @@ export default function ProjectForm({
         showNotification("erreur : " + error);
         setDisableForm(false);
         saveBtn.disabled = false;
+        setIsSaved(false);
         if (editBtn) editBtn.disabled = false;
       });
   };

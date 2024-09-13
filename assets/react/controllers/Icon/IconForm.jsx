@@ -59,6 +59,7 @@ export default function IconForm({
       return;
     }
 
+    setIsSaved(true);
     saveBtn.disabled = true;
     setDisableForm(true);
 
@@ -80,11 +81,13 @@ export default function IconForm({
 
         setDisableForm(false);
         saveBtn.disabled = false;
+        setIsSaved(false);
         return showNotification(data.error);
       })
       .catch((error) => {
         showNotification("erreur : " + error);
         setDisableForm(false);
+        setIsSaved(false);
         saveBtn.disabled = false;
       });
   };

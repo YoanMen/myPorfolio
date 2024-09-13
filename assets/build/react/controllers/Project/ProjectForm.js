@@ -165,12 +165,14 @@ export default function ProjectForm({
       }
       setDisableForm(false);
       saveBtn.disabled = false;
+      setIsSaved(false);
       if (editBtn) editBtn.disabled = false;
       return showNotification(data.error);
     }).catch(error => {
       showNotification("erreur : " + error);
       setDisableForm(false);
       saveBtn.disabled = false;
+      setIsSaved(false);
       if (editBtn) editBtn.disabled = false;
     });
   };
